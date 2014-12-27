@@ -49,6 +49,7 @@ public class MavenInstallationUtils {
   public static String getMavenVersion(File mavenHome, File classworldsConf) {
     classworldsConf = getClassworldsConf(mavenHome, classworldsConf);
 
+    @SuppressWarnings("serial")
     class MavenVersionFoundException extends RuntimeException {
       public final String version;
 
