@@ -29,6 +29,10 @@ public class TestProperties {
 
   public static final String PROP_LOCAL_REPOSITORY = "localRepository";
 
+  public static final String PROP_OFFLINE = "offline";
+
+  public static final String PROP_UPDATESNAPSHOTS = "updateSnapshots";
+
   private final Map<String, String> properties;
 
   public TestProperties() {
@@ -73,6 +77,16 @@ public class TestProperties {
     File dir = new File(path);
     Assert.assertTrue("Local repository is a directory : " + dir, dir.isDirectory());
     return dir;
+  }
+
+  public boolean getOffline() {
+    String value = properties.get(PROP_OFFLINE);
+    return value != null ? Boolean.parseBoolean(value) : false;
+  }
+
+  public boolean getUpdateSnapshots() {
+    String value = properties.get(PROP_UPDATESNAPSHOTS);
+    return value != null ? Boolean.parseBoolean(value) : false;
   }
 
   public String getPluginVersion() {

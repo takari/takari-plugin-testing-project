@@ -41,11 +41,14 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
+import org.apache.maven.DefaultMaven;
+import org.apache.maven.Maven;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.versioning.DefaultArtifactVersion;
 import org.apache.maven.execution.DefaultMavenExecutionRequest;
 import org.apache.maven.execution.DefaultMavenExecutionResult;
 import org.apache.maven.execution.MavenExecutionRequest;
+import org.apache.maven.execution.MavenExecutionRequestPopulator;
 import org.apache.maven.execution.MavenExecutionResult;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.execution.MojoExecutionEvent;
@@ -64,7 +67,6 @@ import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.ProjectBuilder;
 import org.apache.maven.project.ProjectBuildingRequest;
 import org.apache.maven.repository.RepositorySystem;
-import org.apache.maven.repository.internal.MavenRepositorySystemUtils;
 import org.apache.maven.session.scope.internal.SessionScope;
 import org.codehaus.plexus.ContainerConfiguration;
 import org.codehaus.plexus.DefaultContainerConfiguration;
@@ -82,6 +84,7 @@ import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.xml.XmlStreamReader;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
 import org.eclipse.aether.DefaultRepositorySystemSession;
+import org.eclipse.aether.RepositorySystemSession;
 import org.junit.Assert;
 import org.junit.rules.TestRule;
 import org.junit.runner.Description;
@@ -113,8 +116,8 @@ public class TestMavenRuntime implements TestRule {
     MAVEN_VERSION = version;
   }
 
-
   private final Module[] modules;
+  private final TestProperties properties = new TestProperties();
 
   private DefaultPlexusContainer container;
   private Map<String, MojoDescriptor> mojoDescriptors;
@@ -248,11 +251,19 @@ public class TestMavenRuntime implements TestRule {
     return project;
   }
 
-  public MavenSession newMavenSession(MavenProject project) {
+  public MavenSession newMavenSession(MavenProject project) throws Exception {
     MavenExecutionRequest request = new DefaultMavenExecutionRequest();
     MavenExecutionResult result = new DefaultMavenExecutionResult();
 
-    DefaultRepositorySystemSession repositorySession = MavenRepositorySystemUtils.newSession();
+    request.setLocalRepositoryPath(properties.getLocalRepository());
+    request.setUserSettingsFile(properties.getUserSettings());
+    request.setOffline(properties.getOffline());
+    request.setUpdateSnapshots(properties.getUpdateSnapshots());
+
+    request = container.lookup(MavenExecutionRequestPopulator.class).populateDefaults(request);
+    RepositorySystemSession repositorySession =
+        ((DefaultMaven) container.lookup(Maven.class)).newRepositorySession(request);
+
     MavenSession session = new MavenSession(container, repositorySession, request, result);
     session.setCurrentProject(project);
     session.setProjects(Arrays.asList(project));
