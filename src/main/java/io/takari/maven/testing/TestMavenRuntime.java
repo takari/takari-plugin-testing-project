@@ -142,15 +142,14 @@ public class TestMavenRuntime implements TestRule {
   }
 
   public void setup() throws Exception {
-    Assert.assertTrue("Maven 3.2.5 or better is required", MAVEN_VERSION == null
-        || new DefaultArtifactVersion("3.2.5").compareTo(MAVEN_VERSION) <= 0);
+    Assert.assertTrue("Maven 3.2.5 or better is required", MAVEN_VERSION == null || new DefaultArtifactVersion("3.2.5").compareTo(MAVEN_VERSION) <= 0);
 
-    ClassWorld classWorld =
-        new ClassWorld("plexus.core", Thread.currentThread().getContextClassLoader());
-    ContainerConfiguration cc =
-        new DefaultContainerConfiguration().setClassWorld(classWorld)
-            .setClassPathScanning(PlexusConstants.SCANNING_INDEX).setAutoWiring(true)
-            .setName("maven");
+    ClassWorld classWorld = new ClassWorld("plexus.core", Thread.currentThread().getContextClassLoader());
+    ContainerConfiguration cc = new DefaultContainerConfiguration() //
+        .setClassWorld(classWorld) //
+        .setClassPathScanning(PlexusConstants.SCANNING_INDEX) //
+        .setAutoWiring(true) //
+        .setName("maven");
     this.container = new DefaultPlexusContainer(cc, modules);
     this.mojoDescriptors = readPluginXml(container);
   }
@@ -160,8 +159,7 @@ public class TestMavenRuntime implements TestRule {
     container = null;
   }
 
-  private Map<String, MojoDescriptor> readPluginXml(DefaultPlexusContainer container)
-      throws Exception {
+  private Map<String, MojoDescriptor> readPluginXml(DefaultPlexusContainer container) throws Exception {
     InputStream is = getClass().getResourceAsStream("/" + PATH_PLUGINXML);
 
     XmlStreamReader reader = new XmlStreamReader(is);
@@ -169,15 +167,12 @@ public class TestMavenRuntime implements TestRule {
     @SuppressWarnings("rawtypes")
     Map contextData = container.getContext().getContextData();
     @SuppressWarnings("unchecked")
-    InterpolationFilterReader interpolationFilterReader =
-        new InterpolationFilterReader(new BufferedReader(reader), contextData);
+    InterpolationFilterReader interpolationFilterReader = new InterpolationFilterReader(new BufferedReader(reader), contextData);
 
-    PluginDescriptor pluginDescriptor =
-        new PluginDescriptorBuilder().build(interpolationFilterReader);
+    PluginDescriptor pluginDescriptor = new PluginDescriptorBuilder().build(interpolationFilterReader);
 
-    Artifact artifact =
-        container.lookup(RepositorySystem.class).createArtifact(pluginDescriptor.getGroupId(),
-            pluginDescriptor.getArtifactId(), pluginDescriptor.getVersion(), ".jar");
+    Artifact artifact = container.lookup(RepositorySystem.class) //
+        .createArtifact(pluginDescriptor.getGroupId(), pluginDescriptor.getArtifactId(), pluginDescriptor.getVersion(), ".jar");
 
     artifact.setFile(getPluginArtifactFile());
     pluginDescriptor.setPluginArtifact(artifact);
@@ -197,8 +192,7 @@ public class TestMavenRuntime implements TestRule {
   /**
    * Returns best-effort plugin artifact file.
    * <p>
-   * First, attempts to determine parent directory of META-INF directory holding the plugin
-   * descriptor. If META-INF parent directory cannot be determined, falls back to test basedir.
+   * First, attempts to determine parent directory of META-INF directory holding the plugin descriptor. If META-INF parent directory cannot be determined, falls back to test basedir.
    */
   private File getPluginArtifactFile() throws IOException {
     final String pluginDescriptorLocation = PATH_PLUGINXML;
@@ -220,8 +214,7 @@ public class TestMavenRuntime implements TestRule {
           if ("file".equalsIgnoreCase(jarfile.getProtocol())) {
             String path = jarfile.getPath();
             if (path.endsWith(pluginDescriptorLocation)) {
-              file =
-                  new File(path.substring(0, path.length() - pluginDescriptorLocation.length() - 2));
+              file = new File(path.substring(0, path.length() - pluginDescriptorLocation.length() - 2));
             }
           }
         } catch (MalformedURLException e) {
@@ -245,8 +238,7 @@ public class TestMavenRuntime implements TestRule {
     request.setBaseDirectory(basedir);
     ProjectBuildingRequest configuration = request.getProjectBuildingRequest();
     configuration.setRepositorySession(new DefaultRepositorySystemSession());
-    MavenProject project =
-        container.lookup(ProjectBuilder.class).build(pom, configuration).getProject();
+    MavenProject project = container.lookup(ProjectBuilder.class).build(pom, configuration).getProject();
     Assert.assertNotNull(project);
     return project;
   }
@@ -261,8 +253,7 @@ public class TestMavenRuntime implements TestRule {
     request.setUpdateSnapshots(properties.getUpdateSnapshots());
 
     request = container.lookup(MavenExecutionRequestPopulator.class).populateDefaults(request);
-    RepositorySystemSession repositorySession =
-        ((DefaultMaven) container.lookup(Maven.class)).newRepositorySession(request);
+    RepositorySystemSession repositorySession = ((DefaultMaven) container.lookup(Maven.class)).newRepositorySession(request);
 
     MavenSession session = new MavenSession(container, repositorySession, request, result);
     session.setCurrentProject(project);
@@ -272,8 +263,7 @@ public class TestMavenRuntime implements TestRule {
 
   public MojoExecution newMojoExecution(String goal) {
     MojoDescriptor mojoDescriptor = mojoDescriptors.get(goal);
-    assertNotNull(String.format("The MojoDescriptor for the goal %s cannot be null.", goal),
-        mojoDescriptor);
+    assertNotNull(String.format("The MojoDescriptor for the goal %s cannot be null.", goal), mojoDescriptor);
     MojoExecution execution = new MojoExecution(mojoDescriptor);
     finalizeMojoConfiguration(execution);
     return execution;
@@ -303,14 +293,12 @@ public class TestMavenRuntime implements TestRule {
 
         Xpp3Dom parameterDefaults = defaultConfiguration.getChild(parameter.getName());
 
-        parameterConfiguration =
-            Xpp3Dom.mergeXpp3Dom(parameterConfiguration, parameterDefaults, Boolean.TRUE);
+        parameterConfiguration = Xpp3Dom.mergeXpp3Dom(parameterConfiguration, parameterDefaults, Boolean.TRUE);
 
         if (parameterConfiguration != null) {
           parameterConfiguration = new Xpp3Dom(parameterConfiguration, parameter.getName());
 
-          if (StringUtils.isEmpty(parameterConfiguration.getAttribute("implementation"))
-              && StringUtils.isNotEmpty(parameter.getImplementation())) {
+          if (StringUtils.isEmpty(parameterConfiguration.getAttribute("implementation")) && StringUtils.isNotEmpty(parameter.getImplementation())) {
             parameterConfiguration.setAttribute("implementation", parameter.getImplementation());
           }
 
@@ -328,8 +316,7 @@ public class TestMavenRuntime implements TestRule {
     executeMojo(session, project, goal, parameters);
   }
 
-  public void executeMojo(MavenSession session, MavenProject project, String goal,
-      Xpp3Dom... parameters) throws Exception {
+  public void executeMojo(MavenSession session, MavenProject project, String goal, Xpp3Dom... parameters) throws Exception {
     MojoExecution execution = newMojoExecution(goal);
     if (parameters != null) {
       Xpp3Dom configuration = execution.getConfiguration();
@@ -340,14 +327,12 @@ public class TestMavenRuntime implements TestRule {
     executeMojo(session, project, execution);
   }
 
-  public void executeMojo(MavenProject project, String goal, Xpp3Dom... parameters)
-      throws Exception {
+  public void executeMojo(MavenProject project, String goal, Xpp3Dom... parameters) throws Exception {
     MavenSession session = newMavenSession(project);
     executeMojo(session, project, goal, parameters);
   }
 
-  public void executeMojo(MavenSession session, MavenProject project, MojoExecution execution)
-      throws Exception {
+  public void executeMojo(MavenSession session, MavenProject project, MojoExecution execution) throws Exception {
     SessionScope sessionScope = container.lookup(SessionScope.class);
     try {
       sessionScope.enter();
@@ -400,11 +385,9 @@ public class TestMavenRuntime implements TestRule {
       configuratorHint = mojoDescriptor.getComponentConfigurator();
     }
 
-    ComponentConfigurator configurator =
-        container.lookup(ComponentConfigurator.class, configuratorHint);
+    ComponentConfigurator configurator = container.lookup(ComponentConfigurator.class, configuratorHint);
 
-    configurator.configureComponent(mojo, pluginConfiguration, evaluator,
-        container.getContainerRealm());
+    configurator.configureComponent(mojo, pluginConfiguration, evaluator, container.getContainerRealm());
 
     return mojo;
   }

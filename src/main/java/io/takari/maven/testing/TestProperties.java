@@ -94,8 +94,7 @@ public class TestProperties {
   }
 
   /**
-   * Returns location of the current project classes, i.e. target/classes directory, and all project
-   * dependencies with scope=runtime.
+   * Returns location of the current project classes, i.e. target/classes directory, and all project dependencies with scope=runtime.
    */
   public List<File> getRuntimeClasspath() {
     StringTokenizer st = new StringTokenizer(properties.get(PROP_CLASSPATH), File.pathSeparator);

@@ -10,8 +10,8 @@ package io.takari.maven.testing.executor.junit;
 import io.takari.maven.testing.executor.MavenInstallationUtils;
 import io.takari.maven.testing.executor.MavenInstallations;
 import io.takari.maven.testing.executor.MavenRuntime;
-import io.takari.maven.testing.executor.MavenVersions;
 import io.takari.maven.testing.executor.MavenRuntime.MavenRuntimeBuilder;
+import io.takari.maven.testing.executor.MavenVersions;
 
 import java.io.File;
 import java.util.ArrayList;

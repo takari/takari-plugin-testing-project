@@ -71,16 +71,13 @@ public class TestResources extends TestWatcher {
   }
 
   /**
-   * Creates new clean copy of test project directory structure. The copy is named after both the
-   * test being executed and test project name, which allows the same test project can be used by
-   * multiple tests and by different instances of the same parametrized tests.<br/>
-   * TODO Provide alternative working directory naming for Windows, which still limits path names to
-   * ~250 charecters
+   * Creates new clean copy of test project directory structure. The copy is named after both the test being executed and test project name, which allows the same test project can be used by multiple
+   * tests and by different instances of the same parametrized tests.<br/>
+   * TODO Provide alternative working directory naming for Windows, which still limits path names to ~250 charecters
    */
   public File getBasedir(String project) throws IOException {
     if (name == null) {
-      throw new IllegalStateException(getClass().getSimpleName()
-          + " must be a test class field annotated with org.junit.Rule");
+      throw new IllegalStateException(getClass().getSimpleName() + " must be a test class field annotated with org.junit.Rule");
     }
     File src = new File(projectsDir, project).getCanonicalFile();
     Assert.assertTrue("Test project directory does not exist: " + src.getPath(), src.isDirectory());
@@ -98,8 +95,7 @@ public class TestResources extends TestWatcher {
     FileUtils.copyFile(new File(basedir, from), new File(basedir, to));
   }
 
-  public static void assertFileContents(File basedir, String expectedPath, String actualPath)
-      throws IOException {
+  public static void assertFileContents(File basedir, String expectedPath, String actualPath) throws IOException {
     String expected = FileUtils.fileRead(new File(basedir, expectedPath));
     String actual = FileUtils.fileRead(new File(basedir, actualPath));
     Assert.assertEquals(expected, actual);
