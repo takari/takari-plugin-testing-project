@@ -10,15 +10,20 @@ package io.takari.maven.testing;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.StringTokenizer;
 
 import org.junit.Assert;
 
 
 public class TestProperties {
+
+  public static final String PROP_CLASSPATH = "classpath";
 
   public static final String PROP_USER_SETTING = "userSettings";
 
@@ -73,4 +78,18 @@ public class TestProperties {
   public String getPluginVersion() {
     return properties.get("project.version");
   }
+
+  /**
+   * Returns location of the current project classes, i.e. target/classes directory, and all project
+   * dependencies with scope=runtime.
+   */
+  public List<File> getRuntimeClasspath() {
+    StringTokenizer st = new StringTokenizer(properties.get(PROP_CLASSPATH), File.pathSeparator);
+    List<File> dependencies = new ArrayList<>();
+    while (st.hasMoreTokens()) {
+      dependencies.add(new File(st.nextToken()));
+    }
+    return dependencies;
+  }
+
 }
