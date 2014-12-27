@@ -23,6 +23,13 @@
   <artifactId>takari-plugin-testing</artifactId>
   <version>2.0.0-SNAPSHOT</version>
   <packaging>takari-jar</packaging>
+  
+  <properties>
+    <mavenVersion>3.2.5</mavenVersion>
+    <sisuVersion>0.3.0.M1</sisuVersion>
+    <sisuGuiceVersion>3.2.3</sisuGuiceVersion>
+    <aetherVersion>1.0.0.v20140518</aetherVersion>
+  </properties>
 
   <dependencies>
     <dependency>
@@ -35,50 +42,50 @@
     <dependency>
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-core</artifactId>
-      <version>3.2.5</version>
+      <version>${mavenVersion}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-plugin-api</artifactId>
-      <version>3.2.5</version>
+      <version>${mavenVersion}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-model</artifactId>
-      <version>3.2.5</version>
+      <version>${mavenVersion}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-aether-provider</artifactId>
-      <version>3.2.5</version>
+      <version>${mavenVersion}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-artifact</artifactId>
-      <version>3.2.5</version>
+      <version>${mavenVersion}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.eclipse.aether</groupId>
       <artifactId>aether-api</artifactId>
-      <version>1.0.0.v20140518</version>
+      <version>${aetherVersion}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.eclipse.sisu</groupId>
       <artifactId>org.eclipse.sisu.plexus</artifactId>
-      <version>0.3.0.M1</version>
+      <version>${sisuVersion}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.sonatype.sisu</groupId>
       <artifactId>sisu-guice</artifactId>
       <classifier>no_aop</classifier>
-      <version>3.2.3</version>
+      <version>${sisuGuiceVersion}</version>
       <scope>provided</scope>
     </dependency>
   
