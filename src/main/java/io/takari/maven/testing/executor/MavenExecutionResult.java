@@ -34,7 +34,7 @@ public class MavenExecutionResult {
     this.log = Collections.unmodifiableList(log);
   }
 
-  public void assertErrorFreeLog() throws Exception {
+  public MavenExecutionResult assertErrorFreeLog() throws Exception {
     List<String> errors = new ArrayList<>();
     for (String line : log) {
       if (line.contains("[ERROR]")) {
@@ -42,23 +42,26 @@ public class MavenExecutionResult {
       }
     }
     Assert.assertTrue(errors.toString(), errors.isEmpty());
+    return this;
   }
 
-  public void assertLogText(String text) {
+  public MavenExecutionResult assertLogText(String text) {
     for (String line : log) {
       if (line.contains(text)) {
-        return;
+        return this;
       }
     }
     Assert.fail("Log line not present: " + text);
+    return this;
   }
 
-  public void assertNoLogText(String text) {
+  public MavenExecutionResult assertNoLogText(String text) {
     for (String line : log) {
       if (line.contains(text)) {
         Assert.fail("Log line present: " + text);
       }
     }
+    return this;
   }
 
   public File getBasedir() {
