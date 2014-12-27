@@ -128,13 +128,17 @@ public class TestMavenRuntime implements TestRule {
     return new Statement() {
       @Override
       public void evaluate() throws Throwable {
-        setupRuntime();
-        base.evaluate();
+        setup();
+        try {
+          base.evaluate();
+        } finally {
+          shutdown();
+        }
       }
     };
   }
 
-  protected void setupRuntime() throws Exception {
+  public void setup() throws Exception {
     Assert.assertTrue("Maven 3.2.5 or better is required", MAVEN_VERSION == null
         || new DefaultArtifactVersion("3.2.5").compareTo(MAVEN_VERSION) <= 0);
 
@@ -146,6 +150,11 @@ public class TestMavenRuntime implements TestRule {
             .setName("maven");
     this.container = new DefaultPlexusContainer(cc, modules);
     this.mojoDescriptors = readPluginXml(container);
+  }
+
+  public void shutdown() {
+    container.dispose();
+    container = null;
   }
 
   private Map<String, MojoDescriptor> readPluginXml(DefaultPlexusContainer container)
