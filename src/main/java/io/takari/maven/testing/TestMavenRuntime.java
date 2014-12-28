@@ -37,6 +37,7 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -161,6 +162,10 @@ public class TestMavenRuntime implements TestRule {
 
   private Map<String, MojoDescriptor> readPluginXml(DefaultPlexusContainer container) throws Exception {
     InputStream is = getClass().getResourceAsStream("/" + PATH_PLUGINXML);
+
+    if (is == null) {
+      return Collections.emptyMap();
+    }
 
     XmlStreamReader reader = new XmlStreamReader(is);
 
