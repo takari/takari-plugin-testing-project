@@ -89,7 +89,7 @@ public class MavenJUnitTestRunner extends Suite {
     super(clazz, getRunners(clazz));
   }
 
-  private static List<Runner> getRunners(Class<?> clazz) throws Throwable {
+  private static List<Runner> getRunners(final Class<?> clazz) throws Throwable {
     File forcedMavenHome = MavenInstallationUtils.getForcedMavenHome();
     File forcedClassworldsConf = MavenInstallationUtils.getForcedClassworldsConf();
 
@@ -101,8 +101,8 @@ public class MavenJUnitTestRunner extends Suite {
       throw new InitializationError(new Exception("Invalid -Dmaven.home=" + forcedMavenHome.getAbsolutePath()));
     }
 
-    List<Throwable> errors = new ArrayList<>();
-    List<Runner> runners = new ArrayList<>();
+    final List<Throwable> errors = new ArrayList<>();
+    final List<Runner> runners = new ArrayList<>();
 
     MavenInstallations installations = clazz.getAnnotation(MavenInstallations.class);
     if (installations != null) {
@@ -118,12 +118,27 @@ public class MavenJUnitTestRunner extends Suite {
 
     MavenVersions versions = clazz.getAnnotation(MavenVersions.class);
     if (versions != null) {
-      for (String version : versions.value()) {
-        File mavenHome = new File("target/maven-installation/apache-maven-" + version).getCanonicalFile();
-        if (mavenHome.isDirectory()) {
-          runners.add(new SingleMavenInstallationRunner(clazz, mavenHome, null, version));
-        } else {
-          errors.add(new Exception("Can't locate maven home for version " + version + ", make sure to run 'mvn generate-test-resources'"));
+      try {
+        new MavenVersionResolver() {
+          @Override
+          protected void resolved(File mavenHome, String version) throws InitializationError {
+            runners.add(new SingleMavenInstallationRunner(clazz, mavenHome, null, version));
+          }
+
+          @Override
+          protected void error(String version, Exception cause) {
+            errors.add(new Exception("Could not resolve maven version " + version, cause));
+          }
+        }.resolve(versions.value());
+      } catch (NoClassDefFoundError e) {
+        // TODO decide if this fallback is a good idea.
+        for (String version : versions.value()) {
+          File mavenHome = new File("target/maven-installation/apache-maven-" + version).getCanonicalFile();
+          if (mavenHome.isDirectory()) {
+            runners.add(new SingleMavenInstallationRunner(clazz, mavenHome, null, version));
+          } else {
+            errors.add(new Exception("Can't locate maven home for version " + version + ", make sure to run 'mvn generate-test-resources'"));
+          }
         }
       }
     }
