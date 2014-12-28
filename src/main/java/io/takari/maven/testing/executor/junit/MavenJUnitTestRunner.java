@@ -27,7 +27,7 @@ import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.Statement;
 
 /**
- * Runs JUnit4 tests with one or more Maven runtimes. The test class must have public constructor with single parameter of type {@linkplain MavenRuntimeBuilder VerifierRuntimeBuilder}.
+ * Runs JUnit4 tests with one or more Maven runtimes. The test class must have public constructor with single parameter of type {@linkplain MavenRuntimeBuilder MavenRuntimeBuilder}.
  * <p/>
  * Test Maven runtimes are located in the following order:
  * 
