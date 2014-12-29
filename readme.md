@@ -28,17 +28,19 @@ pom.xml
 
 test code
 
-    @Rule
-    public final TestResources resources = new TestResources();
+    public class PluginUnitTest {
+      @Rule
+      public final TestResources resources = new TestResources();
     
-    @Rule
-    public final TestMavenRuntime maven = new TestMavenRuntime();
+      @Rule
+      public final TestMavenRuntime maven = new TestMavenRuntime();
     
-    @Test
-    public void test() throws Exception {
-      File basedir = resources.getBasedir("testproject");
-      maven.executeMojo(basedir, "mymojo", newParameter("name", "value");
-      assertFilesPresent(basedir, "target/output.txt");
+      @Test
+      public void test() throws Exception {
+        File basedir = resources.getBasedir("testproject");
+        maven.executeMojo(basedir, "mymojo", newParameter("name", "value");
+        assertFilesPresent(basedir, "target/output.txt");
+      }
     }
 
 ### Integration testing with automatic Maven installation download
@@ -103,8 +105,33 @@ pom.xml
       <scope>test</scope>
     </dependency>
 
+test
 
-## Hudson users beware
+    @RunWith(MavenJUnitTestRunner.class)
+    @MavenInstallations({"target/custom-maven-distribution"})
+    public class PluginIntegrationTest {
+      @Rule
+      public final TestResources resources = new TestResources();
+    
+      public final MavenRuntime maven;
+    
+      public PluginIntegrationTest(MavenRuntimeBuilder mavenBuilder) {
+        this.maven = mavenBuilder.withCliOptions("-B", "-U").build();
+      }
+    
+      @Test
+      public void test() throws Exception {
+        File basedir = resources.getBasedir("basic");
+        maven.forProject(basedir)
+          .withCliOption("-Dproperty=value")
+          .withCliOption("-X")
+          .execute("deploy")
+          .assertErrorFreeLog()
+          .assertLogText("some build message");
+      }
+    }
+
+### Hudson users beware
  
 Hudson Maven 3 does not use -s/--settings standard maven command
 option to enable "managed" settings.xml files in maven builds. Because of this, test 
