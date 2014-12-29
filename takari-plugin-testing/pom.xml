@@ -14,22 +14,13 @@
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <groupId>io.takari</groupId>
-    <artifactId>takari</artifactId>
-    <version>15</version>
+    <groupId>io.takari.maven.plugins</groupId>
+    <artifactId>takari-plugin-testing-project</artifactId>
+    <version>2.0.0-SNAPSHOT</version>
   </parent>
 
-  <groupId>io.takari.maven.plugins</groupId>
   <artifactId>takari-plugin-testing</artifactId>
-  <version>2.0.0-SNAPSHOT</version>
   <packaging>takari-jar</packaging>
-
-  <properties>
-    <mavenVersion>3.2.5</mavenVersion>
-    <sisuVersion>0.3.0.M1</sisuVersion>
-    <sisuGuiceVersion>3.2.3</sisuGuiceVersion>
-    <aetherVersion>1.0.0.v20140518</aetherVersion>
-  </properties>
 
   <dependencies>
     <dependency>
@@ -47,87 +38,67 @@
     <dependency>
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-core</artifactId>
-      <version>${mavenVersion}</version>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-plugin-api</artifactId>
-      <version>${mavenVersion}</version>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-model</artifactId>
-      <version>${mavenVersion}</version>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-aether-provider</artifactId>
-      <version>${mavenVersion}</version>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-artifact</artifactId>
-      <version>${mavenVersion}</version>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.eclipse.aether</groupId>
       <artifactId>aether-api</artifactId>
-      <version>${aetherVersion}</version>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.eclipse.sisu</groupId>
       <artifactId>org.eclipse.sisu.plexus</artifactId>
-      <version>${sisuVersion}</version>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.sonatype.sisu</groupId>
       <artifactId>sisu-guice</artifactId>
       <classifier>no_aop</classifier>
-      <version>${sisuGuiceVersion}</version>
+      <scope>provided</scope>
     </dependency>
 
     <!-- integration testing -->
     <dependency>
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-exec</artifactId>
-      <version>1.2</version>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
       <artifactId>plexus-classworlds</artifactId>
-      <version>2.5.2</version>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>io.takari.m2e.workspace</groupId>
       <artifactId>org.eclipse.m2e.workspace.cli</artifactId>
-      <version>0.3.0</version>
+      <scope>provided</scope>
     </dependency>
 
     <!-- automatic resolution of maven runtimes during integration tests -->
     <dependency>
-      <groupId>org.apache.maven</groupId>
-      <artifactId>maven-compat</artifactId>
-      <version>${mavenVersion}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.eclipse.aether</groupId>
-      <artifactId>aether-connector-basic</artifactId>
-      <version>${aetherVersion}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.eclipse.aether</groupId>
-      <artifactId>aether-transport-file</artifactId>
-      <version>${aetherVersion}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.eclipse.aether</groupId>
-      <artifactId>aether-transport-http</artifactId>
-      <version>${aetherVersion}</version>
-    </dependency>
-    <dependency>
       <groupId>io.takari</groupId>
       <artifactId>takari-archiver</artifactId>
-      <version>0.1.7</version>
+      <scope>provided</scope>
     </dependency>
   </dependencies>
 

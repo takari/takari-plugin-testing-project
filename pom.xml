@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Copyright (c) 2014 Takari, Inc.
+    All rights reserved. This program and the accompanying materials
+    are made available under the terms of the Eclipse Public License v1.0
+    which accompanies this distribution, and is available at
+    http://www.eclipse.org/legal/epl-v10.html
+
+-->
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>io.takari</groupId>
+    <artifactId>takari</artifactId>
+    <version>15</version>
+  </parent>
+
+  <groupId>io.takari.maven.plugins</groupId>
+  <artifactId>takari-plugin-testing-project</artifactId>
+  <version>2.0.0-SNAPSHOT</version>
+  <packaging>pom</packaging>
+
+  <properties>
+    <mavenVersion>3.2.5</mavenVersion>
+    <sisuVersion>0.3.0.M1</sisuVersion>
+    <sisuGuiceVersion>3.2.3</sisuGuiceVersion>
+    <aetherVersion>1.0.0.v20140518</aetherVersion>
+    <slf4jVersion>1.7.9</slf4jVersion>
+  </properties>
+
+  <modules>
+    <module>takari-plugin-testing</module>
+    <module>takari-plugin-integration-testing</module>
+    <module>takari-plugin-integration-testing-with-maven-download</module>
+  </modules>
+
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>junit</groupId>
+        <artifactId>junit</artifactId>
+        <version>4.11</version>
+      </dependency>
+      <dependency>
+        <groupId>org.codehaus.plexus</groupId>
+        <artifactId>plexus-utils</artifactId>
+        <version>3.0.21</version>
+      </dependency>
+
+      <!-- unit testing -->
+      <dependency>
+        <groupId>org.apache.maven</groupId>
+        <artifactId>maven-core</artifactId>
+        <version>${mavenVersion}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.maven</groupId>
+        <artifactId>maven-plugin-api</artifactId>
+        <version>${mavenVersion}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.maven</groupId>
+        <artifactId>maven-model</artifactId>
+        <version>${mavenVersion}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.maven</groupId>
+        <artifactId>maven-aether-provider</artifactId>
+        <version>${mavenVersion}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.maven</groupId>
+        <artifactId>maven-artifact</artifactId>
+        <version>${mavenVersion}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.eclipse.aether</groupId>
+        <artifactId>aether-api</artifactId>
+        <version>${aetherVersion}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.eclipse.sisu</groupId>
+        <artifactId>org.eclipse.sisu.plexus</artifactId>
+        <version>${sisuVersion}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.sonatype.sisu</groupId>
+        <artifactId>sisu-guice</artifactId>
+        <classifier>no_aop</classifier>
+        <version>${sisuGuiceVersion}</version>
+      </dependency>
+
+      <!-- integration testing -->
+      <dependency>
+        <groupId>org.apache.commons</groupId>
+        <artifactId>commons-exec</artifactId>
+        <version>1.2</version>
+      </dependency>
+      <dependency>
+        <groupId>org.codehaus.plexus</groupId>
+        <artifactId>plexus-classworlds</artifactId>
+        <version>2.5.2</version>
+      </dependency>
+      <dependency>
+        <groupId>io.takari.m2e.workspace</groupId>
+        <artifactId>org.eclipse.m2e.workspace.cli</artifactId>
+        <version>0.3.0</version>
+      </dependency>
+
+      <!-- automatic resolution of maven runtimes during integration tests -->
+      <dependency>
+        <groupId>org.slf4j</groupId>
+        <artifactId>slf4j-api</artifactId>
+        <version>${slf4jVersion}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.slf4j</groupId>
+        <artifactId>slf4j-simple</artifactId>
+        <version>${slf4jVersion}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.maven</groupId>
+        <artifactId>maven-compat</artifactId>
+        <version>${mavenVersion}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.eclipse.aether</groupId>
+        <artifactId>aether-connector-basic</artifactId>
+        <version>${aetherVersion}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.eclipse.aether</groupId>
+        <artifactId>aether-transport-file</artifactId>
+        <version>${aetherVersion}</version>
+      </dependency>
+      <dependency>
+        <groupId>io.takari.aether</groupId>
+        <artifactId>aether-connector-okhttp</artifactId>
+        <version>0.14.0</version>
+      </dependency>
+      <dependency>
+        <groupId>io.takari</groupId>
+        <artifactId>takari-archiver</artifactId>
+        <version>0.1.7</version>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
+</project>
