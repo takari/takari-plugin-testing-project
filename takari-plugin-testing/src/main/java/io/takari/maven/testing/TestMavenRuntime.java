@@ -131,6 +131,10 @@ public class TestMavenRuntime implements TestRule {
   private DefaultPlexusContainer container;
   private Map<String, MojoDescriptor> mojoDescriptors;
 
+  public TestMavenRuntime() {
+    this(new Module[0]);
+  }
+
   public TestMavenRuntime(Module... modules) {
     this.modules = modules;
   }

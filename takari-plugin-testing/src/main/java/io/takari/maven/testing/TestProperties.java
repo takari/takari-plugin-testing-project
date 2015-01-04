@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.StringTokenizer;
+import java.util.TreeMap;
 
 import org.junit.Assert;
 
@@ -32,6 +33,8 @@ public class TestProperties {
   public static final String PROP_OFFLINE = "offline";
 
   public static final String PROP_UPDATESNAPSHOTS = "updateSnapshots";
+
+  public static final String PROP_REPOSITORY = "repository.";
 
   private final Map<String, String> properties;
 
@@ -105,4 +108,13 @@ public class TestProperties {
     return dependencies;
   }
 
+  public List<String> getRepositories() {
+    TreeMap<String, String> repositories = new TreeMap<>();
+    for (Map.Entry<String, String> property : properties.entrySet()) {
+      if (property.getKey().startsWith(PROP_REPOSITORY)) {
+        repositories.put(property.getKey(), property.getValue());
+      }
+    }
+    return new ArrayList<>(repositories.values());
+  }
 }

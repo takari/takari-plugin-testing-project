@@ -41,6 +41,13 @@
       <groupId>io.takari.m2e.workspace</groupId>
       <artifactId>org.eclipse.m2e.workspace.cli</artifactId>
     </dependency>
+
+    <!-- @MavenVersions support -->
+    <dependency>
+      <groupId>io.takari</groupId>
+      <artifactId>takari-archiver</artifactId>
+    </dependency>
+
   </dependencies>
 
 </project>

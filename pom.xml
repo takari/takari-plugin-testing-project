@@ -35,7 +35,6 @@
   <modules>
     <module>takari-plugin-testing</module>
     <module>takari-plugin-integration-testing</module>
-    <module>takari-plugin-integration-testing-with-maven-download</module>
   </modules>
 
   <dependencyManagement>

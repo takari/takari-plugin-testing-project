@@ -19,10 +19,26 @@ Features and benefits
 
 pom.xml
 
+    <packaging>takari-maven-plugin</packaging>
+    
     <dependency>
       <groupId>io.takari.maven.plugins</groupId>
       <artifactId>takari-plugin-testing</artifactId>
       <version>2.0.0-SNAPSHOT</version>
+      <scope>test</scope>
+    </dependency>
+    
+    <!-- required if not already present in main dependencies -->
+    <dependency>
+      <groupId>org.apache.maven</groupId>
+      <artifactId>maven-core</artifactId>
+      <version>${mavenVersion}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.maven</groupId>
+      <artifactId>maven-compat</artifactId>
+      <version>${mavenVersion}</version>
       <scope>test</scope>
     </dependency>
 
@@ -43,10 +59,12 @@ test code
       }
     }
 
-### Integration testing with automatic Maven installation download
+### Integration testing
 
 pom.xml
 
+    <packaging>takari-maven-plugin</packaging>
+        
     <dependency>
       <groupId>io.takari.maven.plugins</groupId>
       <artifactId>takari-plugin-testing</artifactId>
@@ -61,54 +79,11 @@ pom.xml
       <scope>test</scope>
     </dependency>
 
+
 test
 
     @RunWith(MavenJUnitTestRunner.class)
     @MavenVersions({"3.2.3", "3.2.5"})
-    public class PluginIntegrationTest {
-      @Rule
-      public final TestResources resources = new TestResources();
-    
-      public final MavenRuntime maven;
-    
-      public PluginIntegrationTest(MavenRuntimeBuilder mavenBuilder) {
-        this.maven = mavenBuilder.withCliOptions("-B", "-U").build();
-      }
-    
-      @Test
-      public void test() throws Exception {
-        File basedir = resources.getBasedir("basic");
-        maven.forProject(basedir)
-          .withCliOption("-Dproperty=value")
-          .withCliOption("-X")
-          .execute("deploy")
-          .assertErrorFreeLog()
-          .assertLogText("some build message");
-      }
-    }
-
-### Integration testing
-
-pom.xml
-
-    <dependency>
-      <groupId>io.takari.maven.plugins</groupId>
-      <artifactId>takari-plugin-testing</artifactId>
-      <version>2.0.0-SNAPSHOT</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>io.takari.maven.plugins</groupId>
-      <artifactId>takari-plugin-integration-testing</artifactId>
-      <version>2.0.0-SNAPSHOT</version>
-      <type>pom</type>
-      <scope>test</scope>
-    </dependency>
-
-test
-
-    @RunWith(MavenJUnitTestRunner.class)
-    @MavenInstallations({"target/custom-maven-distribution"})
     public class PluginIntegrationTest {
       @Rule
       public final TestResources resources = new TestResources();
