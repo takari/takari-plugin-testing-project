@@ -73,7 +73,7 @@ pom.xml
     </dependency>
     <dependency>
       <groupId>io.takari.maven.plugins</groupId>
-      <artifactId>takari-plugin-integration-testing-with-maven-download</artifactId>
+      <artifactId>takari-plugin-integration-testing</artifactId>
       <version>2.0.0-SNAPSHOT</version>
       <type>pom</type>
       <scope>test</scope>
