@@ -74,12 +74,9 @@ public class TestProperties {
   }
 
   public File getLocalRepository() {
-    // can't be null
     String path = properties.get(PROP_LOCAL_REPOSITORY);
     Assert.assertNotNull("Local repository specified", path);
-    File dir = new File(path);
-    Assert.assertTrue("Local repository is a directory : " + dir, dir.isDirectory());
-    return dir;
+    return new File(path);
   }
 
   public boolean getOffline() {
