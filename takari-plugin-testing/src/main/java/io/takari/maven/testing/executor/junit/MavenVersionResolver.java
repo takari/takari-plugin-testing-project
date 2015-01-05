@@ -65,6 +65,9 @@ abstract class MavenVersionResolver {
     for (String property : properties.getRepositories()) {
       InputSource is = new InputSource(new StringReader("<repository>" + property + "</repository>"));
       String url = getXPath(is, "/repository/url");
+      if (url == null) {
+        continue; // malformed test.properties
+      }
       if (!url.endsWith("/")) {
         url = url + "/";
       }
@@ -74,7 +77,12 @@ abstract class MavenVersionResolver {
   }
 
   private String getXPath(InputSource is, String path) throws Exception {
-    return xpathFactory.newXPath().compile(path).evaluate(is);
+    String value = xpathFactory.newXPath().compile(path).evaluate(is);
+    if (value == null) {
+      return null;
+    }
+    value = value.trim();
+    return !value.isEmpty() ? value : null;
   }
 
   private File downloadMaven(File targetdir, Collection<URL> repositories, String version) throws Exception {
