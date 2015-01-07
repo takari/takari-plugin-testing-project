@@ -11,6 +11,7 @@ import static org.eclipse.m2e.workspace.WorkspaceState.SYSPROP_STATEFILE_LOCATIO
 import io.takari.maven.testing.TestProperties;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -129,5 +130,12 @@ public class MavenRuntime {
 
   public MavenExecution forProject(File basedir) {
     return new MavenExecution(launcher, properties, basedir);
+  }
+
+  /**
+   * @since 2.0
+   */
+  public String getMavenVersion() throws IOException, LauncherException {
+    return launcher.getMavenVersion();
   }
 }
