@@ -335,13 +335,13 @@ class Embedded3xLauncher implements MavenLauncher {
   }
 
   @Override
-  public int run(String[] cliArgs, String workingDirectory, File logFile) throws IOException, LauncherException {
+  public int run(String[] cliArgs, File workingDirectory, File logFile) throws IOException, LauncherException {
     PrintStream out = (logFile != null) ? new PrintStream(new FileOutputStream(logFile)) : System.out;
     try {
       Properties originalProperties = copy(System.getProperties());
       System.setProperties(null);
       System.setProperty(SYSPROP_MAVEN_HOME, mavenHome.getAbsolutePath());
-      System.setProperty("user.dir", new File(workingDirectory).getAbsolutePath());
+      System.setProperty("user.dir", workingDirectory.getAbsolutePath());
 
       ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
       Thread.currentThread().setContextClassLoader(mavenCli.getClass().getClassLoader());

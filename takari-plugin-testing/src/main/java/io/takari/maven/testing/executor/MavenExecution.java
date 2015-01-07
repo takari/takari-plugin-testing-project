@@ -47,7 +47,7 @@ public class MavenExecution {
       args.add(goal);
     }
 
-    launcher.run(args.toArray(new String[args.size()]), basedir.getAbsolutePath(), logFile);
+    launcher.run(args.toArray(new String[args.size()]), basedir, logFile);
 
     return new MavenExecutionResult(basedir, logFile);
   }

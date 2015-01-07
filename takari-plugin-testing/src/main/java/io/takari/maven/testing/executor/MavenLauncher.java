@@ -30,7 +30,7 @@ import java.io.IOException;
  */
 interface MavenLauncher {
 
-  int run(String[] cliArgs, String workingDirectory, File logFile) throws IOException, LauncherException;
+  int run(String[] cliArgs, File workingDirectory, File logFile) throws IOException, LauncherException;
 
   String getMavenVersion() throws IOException, LauncherException;
 }

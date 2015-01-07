@@ -73,7 +73,7 @@ class ForkedLauncher implements MavenLauncher {
     this.executable = new File(mavenHome, "bin/mvn");
   }
 
-  public int run(String[] cliArgs, Map<String, String> envVars, String workingDirectory, File logFile) throws IOException, LauncherException {
+  public int run(String[] cliArgs, Map<String, String> envVars, File workingDirectory, File logFile) throws IOException, LauncherException {
     CommandLine cli = new CommandLine(executable);
     cli.addArguments(args.toArray(new String[args.size()]));
     cli.addArguments(cliArgs);
@@ -96,7 +96,7 @@ class ForkedLauncher implements MavenLauncher {
 
     DefaultExecutor executor = new DefaultExecutor();
     executor.setProcessDestroyer(new ShutdownHookProcessDestroyer());
-    executor.setWorkingDirectory(new File(workingDirectory));
+    executor.setWorkingDirectory(workingDirectory.getAbsoluteFile());
 
     try (OutputStream log = new FileOutputStream(logFile)) {
       PrintStream out = new PrintStream(log);
@@ -127,7 +127,7 @@ class ForkedLauncher implements MavenLauncher {
   }
 
   @Override
-  public int run(String[] cliArgs, String workingDirectory, File logFile) throws IOException, LauncherException {
+  public int run(String[] cliArgs, File workingDirectory, File logFile) throws IOException, LauncherException {
     return run(cliArgs, envVars, workingDirectory, logFile);
   }
 
@@ -144,7 +144,7 @@ class ForkedLauncher implements MavenLauncher {
 
     // disable EMMA runtime controller port allocation, should be harmless if EMMA is not used
     Map<String, String> envVars = Collections.singletonMap("MAVEN_OPTS", "-Demma.rt.control=false");
-    run(new String[] {"--version"}, envVars, null, logFile);
+    run(new String[] {"--version"}, envVars, new File(""), logFile);
 
     List<String> logLines = Files.readAllLines(logFile.toPath(), Charset.defaultCharset());
     // noinspection ResultOfMethodCallIgnored
