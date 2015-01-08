@@ -109,6 +109,24 @@ public class MavenRuntime {
     }
 
     @Override
+    public ForkedMavenRuntimeBuilder withExtension(File extensionLocation) {
+      super.withExtension(extensionLocation);
+      return this;
+    }
+
+    @Override
+    public ForkedMavenRuntimeBuilder withExtensions(Collection<File> extensionLocations) {
+      withExtensions(extensionLocations);
+      return this;
+    }
+
+    @Override
+    public ForkedMavenRuntimeBuilder withCliOptions(String... options) {
+      withCliOptions(options);
+      return this;
+    }
+
+    @Override
     public MavenRuntime build() {
       ForkedLauncher launcher = new ForkedLauncher(mavenHome, classworldsConf, extensions, environment, args);
       return new MavenRuntime(launcher, properties);
