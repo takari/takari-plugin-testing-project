@@ -116,13 +116,13 @@ public class MavenRuntime {
 
     @Override
     public ForkedMavenRuntimeBuilder withExtensions(Collection<File> extensionLocations) {
-      withExtensions(extensionLocations);
+      super.withExtensions(extensionLocations);
       return this;
     }
 
     @Override
     public ForkedMavenRuntimeBuilder withCliOptions(String... options) {
-      withCliOptions(options);
+      super.withCliOptions(options);
       return this;
     }
 
