@@ -14,7 +14,7 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>takari-plugin-testing-its</groupId>
-  <artifactId>dependency-tree</artifactId>
+  <artifactId>classloading</artifactId>
   <version>1.0-SNAPSHOT</version>
   <packaging>takari-maven-plugin</packaging>
 

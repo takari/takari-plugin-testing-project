@@ -14,7 +14,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 @RunWith(MavenJUnitTestRunner.class)
-@MavenVersions("3.0.5")
+@MavenVersions({"3.0.5", "3.2.5", "3.2.6-SNAPSHOT"})
 public class ClassloadingMojoTest {
 
   @Rule
@@ -23,7 +23,9 @@ public class ClassloadingMojoTest {
   private final MavenRuntime maven;
 
   public ClassloadingMojoTest(MavenRuntimeBuilder builder) throws Exception {
-    this.maven = builder.forkedBuilder().withCliOptions("-B", "-U").build();
+    this.maven = builder.withCliOptions("-B", "-U").build();
+    // a workaround
+    // this.maven = builder.forkedBuilder().withCliOptions("-B", "-U").build();
   }
 
   @Test
@@ -36,16 +38,16 @@ public class ClassloadingMojoTest {
     VersionRange MAVEN30 = VersionRange.createFromVersionSpec("[3.0,3.1)");
     VersionRange MAVEN31 = VersionRange.createFromVersionSpec("[3.1,)");
 
-    String hint;
+    result.assertErrorFreeLog();
+
     if (MAVEN30.containsVersion(mavenVersion)) {
-      hint = "maven30x";
+      result.assertLogText("org.sonatype.aether");
+      result.assertNoLogText("org.eclipse.aether");
     } else if (MAVEN31.containsVersion(mavenVersion)) {
-      hint = "maven31+";
+      result.assertLogText("org.eclipse.aether");
+      result.assertNoLogText("org.sonatype.aether");
     } else {
       throw new AssertionError("Unsupported maven version: " + mavenVersion);
     }
-
-    result.assertErrorFreeLog();
-    result.assertLogText("maven: " + hint);
   }
 }

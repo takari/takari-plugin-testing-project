@@ -10,21 +10,25 @@ public class ClassloadingMojo extends AbstractMojo {
 
   @Override
   public void execute() throws MojoExecutionException, MojoFailureException {
-    System.out.println("maven: " + (isMaven31() ? "maven31+" : isMaven2x() ? "maven2x" : "maven30x"));
+    if (isEclipseAether()) {
+      System.out.println("org.eclipse.aether");
+    }
+    if (isSonatypeAether()) {
+      System.out.println("org.sonatype.aether");
+    }
   }
 
-  protected static boolean isMaven2x() {
-    return !canFindCoreClass("org.apache.maven.project.DependencyResolutionRequest");
+  protected static boolean isSonatypeAether() {
+    return canFindCoreClass("org.sonatype.aether.artifact.Artifact");
   }
 
-  protected static boolean isMaven31() {
+  protected static boolean isEclipseAether() {
     return canFindCoreClass("org.eclipse.aether.artifact.Artifact");
   }
 
   private static boolean canFindCoreClass(String className) {
     try {
       Thread.currentThread().getContextClassLoader().loadClass(className);
-
       return true;
     } catch (ClassNotFoundException e) {
       return false;
