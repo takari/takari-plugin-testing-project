@@ -41,11 +41,11 @@ public class ClassloadingMojoTest {
     result.assertErrorFreeLog();
 
     if (MAVEN30.containsVersion(mavenVersion)) {
-      result.assertLogText("org.sonatype.aether");
-      result.assertNoLogText("org.eclipse.aether");
+      result.assertLogText("classloader: org.sonatype.aether");
+      result.assertNoLogText("classloader: org.eclipse.aether");
     } else if (MAVEN31.containsVersion(mavenVersion)) {
-      result.assertLogText("org.eclipse.aether");
-      result.assertNoLogText("org.sonatype.aether");
+      result.assertLogText("classloader: org.eclipse.aether");
+      result.assertNoLogText("classloader: org.sonatype.aether");
     } else {
       throw new AssertionError("Unsupported maven version: " + mavenVersion);
     }

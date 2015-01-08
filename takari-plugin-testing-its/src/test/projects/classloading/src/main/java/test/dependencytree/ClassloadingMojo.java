@@ -11,10 +11,10 @@ public class ClassloadingMojo extends AbstractMojo {
   @Override
   public void execute() throws MojoExecutionException, MojoFailureException {
     if (isEclipseAether()) {
-      System.out.println("org.eclipse.aether");
+      System.out.println("classloader: org.eclipse.aether");
     }
     if (isSonatypeAether()) {
-      System.out.println("org.sonatype.aether");
+      System.out.println("classloader: org.sonatype.aether");
     }
   }
 

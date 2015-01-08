@@ -17,6 +17,19 @@
   <artifactId>classloading</artifactId>
   <version>1.0-SNAPSHOT</version>
   <packaging>takari-maven-plugin</packaging>
+  
+  <!--
+    | the point of this test is to demonstrate test dependencies "leakage"
+    | into integration tests, as explained in classloading.md.
+    |
+    | This test plugin is tested with maven 3.0.5, 3.2.5 and 3.2.6-SNAPSHOT.
+    |
+    | Depending on mavenVersion used to compile the test plugin, either
+    | 3.0.5 or 3.2.5 integration test will "see" unexpected aether classes.
+    |
+    | 3.2.6-SNAPSHOT is not affected by the problem and passes regardless of
+    | version of maven used to compile. 
+   -->
 
   <properties>
     <takariLifecycleVersion>1.10.0-SNAPSHOT</takariLifecycleVersion>
