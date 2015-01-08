@@ -357,7 +357,7 @@ class Embedded3xLauncher implements MavenLauncher {
         out.format("Execution parameters: %s\n\n", args);
 
         Object result = doMain.invoke(mavenCli, //
-            args.toArray(new String[args.size()]), workingDirectory, out, out);
+            args.toArray(new String[args.size()]), workingDirectory.getAbsolutePath(), out, out);
 
         Set<String> realms = getRealmIds();
         realms.removeAll(origRealms);
