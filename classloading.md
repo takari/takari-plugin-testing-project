@@ -14,7 +14,11 @@ jvm extensions classloader (more precisely, parent of the system classloader)
 as their parent and do not have access to maven core classes used by unit
 tests.
 
-## The problem
+## Test dependencies "leak" into integration test runtime
+
+**Update**: as of 2015-01-08, Maven 3.2.6-SNAPSHOT does not use hardcoded system
+classloader as the parent of plugin/extensions realms and is not affected by
+the problem described below.
 
 As of version 3.2.5, maven uses jvm system classloader is the parent of both 
 plugin and project extensions class realms. This results in duplicate maven 
@@ -47,9 +51,9 @@ classloader. For example, `maven-dependency-tree` uses presence of
 for projects that are compiled with maven 3.1+ but integration tested with
 maven 3.0.x.
 
-## Solutions
+## Workarounds
 
-### Separate integratino test project module
+### Separate integration test project module (recommended)
 
 It should be possible to setup integration test project module such that it
 does not have maven core dependencies. Although test dependencies will still
@@ -74,16 +78,3 @@ slower and does not support end-to-end debugging from m2e workspace.
       ...    
     }
 
-### Possible future change to maven
-
-Maven uses jvm application classloader as plugin/extensions realm parent to
-support used of javaagent in maven plugins 
-(see http://jira.codehaus.org/browse/MNG-4747). I believe this is very rare
-usecase and vast majority of maven plugins do not require access to 
-application classloader.
-
-It should be possible to change DefaultClassRealmManager to not use system
-classloader unless this is explicitly requested by the plugin.
-
-Alternative, and less intrusive change, would be to allow integration test
-harness choose plugin/extensions realms parent classloader.
