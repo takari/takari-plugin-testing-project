@@ -88,11 +88,18 @@ public class TestMavenRuntime implements TestRule {
         return new Maven321Runtime(modules);
       }
     });
+    // [3.2.5,3.2.5]
+    factories.put(new DefaultArtifactVersion("3.2.6"), new RuntimeFactory() {
+      @Override
+      public MavenRuntime newInstance(Module[] modules) throws Exception {
+        return new Maven325Runtime(modules);
+      }
+    });
     // the last entry is expected to handle every thing else
     factories.put(null, new RuntimeFactory() {
       @Override
       public MavenRuntime newInstance(Module[] modules) throws Exception {
-        return new Maven325Runtime(modules);
+        return new Maven326Runtime(modules);
       }
     });
     FACTORIES = Collections.unmodifiableMap(factories);
