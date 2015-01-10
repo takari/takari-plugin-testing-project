@@ -36,17 +36,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
 import org.apache.maven.DefaultMaven;
 import org.apache.maven.Maven;
-import org.apache.maven.RepositoryUtils;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.versioning.DefaultArtifactVersion;
 import org.apache.maven.execution.DefaultMavenExecutionRequest;
@@ -90,10 +87,6 @@ import org.codehaus.plexus.util.xml.XmlStreamReader;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
 import org.eclipse.aether.DefaultRepositorySystemSession;
 import org.eclipse.aether.RepositorySystemSession;
-import org.eclipse.aether.artifact.DefaultArtifact;
-import org.eclipse.aether.repository.RemoteRepository;
-import org.eclipse.aether.resolution.ArtifactRequest;
-import org.eclipse.aether.resolution.ArtifactResult;
 import org.junit.Assert;
 import org.junit.rules.TestRule;
 import org.junit.runner.Description;
@@ -428,23 +421,4 @@ public class TestMavenRuntime implements TestRule {
     return child;
   }
 
-  public Artifact resolve(String groupId, String artifactId, String version, String classifier, String extension) throws Exception {
-    MavenSession session = newMavenSession();
-
-    org.eclipse.aether.RepositorySystem repoSystem = lookup(org.eclipse.aether.RepositorySystem.class);
-    ArtifactRequest request = new ArtifactRequest();
-    request.setArtifact(new DefaultArtifact(groupId, artifactId, classifier, extension, version));
-
-    // TODO use repositories from test.properties
-    // TODO fallback to repositories from settings.xml active profiles
-    List<RemoteRepository> repositories = new ArrayList<>();
-    if (repositories.isEmpty()) {
-      repositories.add(RepositoryUtils.toRepo(lookup(RepositorySystem.class).createDefaultRemoteRepository()));
-    }
-    request.setRepositories(repositories);
-
-    ArtifactResult result = repoSystem.resolveArtifact(session.getRepositorySession(), request);
-
-    return RepositoryUtils.toArtifact(result.getArtifact());
-  }
 }
