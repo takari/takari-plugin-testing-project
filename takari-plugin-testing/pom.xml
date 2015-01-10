@@ -93,8 +93,8 @@
 
     <!-- automatic resolution of maven runtimes during integration tests -->
     <dependency>
-      <groupId>io.takari</groupId>
-      <artifactId>takari-archiver</artifactId>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-compress</artifactId>
       <scope>provided</scope>
     </dependency>
   </dependencies>

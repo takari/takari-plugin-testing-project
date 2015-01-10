@@ -8,11 +8,12 @@
 package io.takari.maven.testing.executor.junit;
 
 import io.takari.maven.testing.TestProperties;
-import io.tesla.proviso.archive.UnArchiver;
 
+import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -21,25 +22,30 @@ import java.io.OutputStream;
 import java.io.StringReader;
 import java.net.URL;
 import java.net.URLConnection;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.attribute.PosixFilePermission;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.LinkedHashSet;
+import java.util.Set;
 
 import javax.xml.xpath.XPathFactory;
 
+import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
+import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
+import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream;
 import org.junit.runners.model.InitializationError;
 import org.xml.sax.InputSource;
 
 abstract class MavenVersionResolver {
   private static final XPathFactory xpathFactory = XPathFactory.newInstance();
 
-  private static final UnArchiver archiver = new UnArchiver(Collections.<String>emptyList(), Collections.<String>emptyList(), false, false);
-
   public void resolve(String[] versions) throws Exception {
     Collection<URL> repositories = null;
     TestProperties properties = new TestProperties();
     for (String version : versions) {
-      File mavenHome = new File("target/maven-installation/apache-maven-" + version).getCanonicalFile();
+      File basdir = new File("target/maven-installation").getCanonicalFile();
+      File mavenHome = new File(basdir, "apache-maven-" + version).getCanonicalFile();
       if (!mavenHome.isDirectory()) {
         if (repositories == null) {
           repositories = getRepositories(properties);
@@ -51,11 +57,34 @@ abstract class MavenVersionResolver {
           error(version, e);
         }
         if (archive != null) {
-          archiver.unarchive(archive, mavenHome);
+          unarchive(archive, basdir);
         }
       }
       if (mavenHome.isDirectory()) {
         resolved(mavenHome, version);
+      }
+    }
+  }
+
+  private void unarchive(File archive, File directory) throws IOException {
+    try (TarArchiveInputStream ais = new TarArchiveInputStream(new GzipCompressorInputStream(new FileInputStream(archive)))) {
+      TarArchiveEntry entry;
+      while ((entry = ais.getNextTarEntry()) != null) {
+        if (entry.isFile()) {
+          String name = entry.getName();
+          File file = new File(directory, name);
+          file.getParentFile().mkdirs();
+          try (OutputStream os = new BufferedOutputStream(new FileOutputStream(file))) {
+            copy(ais, os);
+          }
+          int mode = entry.getMode();
+          if (mode != -1 && (mode & 0100) != 0) {
+            Path path = file.toPath();
+            Set<PosixFilePermission> permissions = Files.getPosixFilePermissions(path);
+            permissions.add(PosixFilePermission.OWNER_EXECUTE);
+            Files.setPosixFilePermissions(path, permissions);
+          }
+        }
       }
     }
   }
