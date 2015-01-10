@@ -14,6 +14,7 @@ Features and benefits
 * Run plugins integration tests against multiple Maven versions
 * Integration with takari-lifecycle and incrementalbuild library
 * Fully supported by Maven Development Tools m2e extension
+* [2.1.0+] full support for all maven versions starting with 3.0
 
 ### Unit testing
 
@@ -24,7 +25,7 @@ pom.xml
     <dependency>
       <groupId>io.takari.maven.plugins</groupId>
       <artifactId>takari-plugin-testing</artifactId>
-      <version>2.0.0-SNAPSHOT</version>
+      <version>2.0.0</version>
       <scope>test</scope>
     </dependency>
     
@@ -68,13 +69,13 @@ pom.xml
     <dependency>
       <groupId>io.takari.maven.plugins</groupId>
       <artifactId>takari-plugin-testing</artifactId>
-      <version>2.0.0-SNAPSHOT</version>
+      <version>2.0.0</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>io.takari.maven.plugins</groupId>
       <artifactId>takari-plugin-integration-testing</artifactId>
-      <version>2.0.0-SNAPSHOT</version>
+      <version>2.0.0</version>
       <type>pom</type>
       <scope>test</scope>
     </dependency>
