@@ -41,9 +41,9 @@ public class MavenRuntime {
       this.mavenHome = mavenHome;
       this.classworldsConf = classworldsConf;
 
-      String workspaceState = System.getProperty(SYSPROP_STATEFILE_LOCATION);
+      String workspaceState = properties.get("workspaceStateProperties");
       if (workspaceState == null) {
-        workspaceState = properties.get("workspaceStateProperties");
+        workspaceState = System.getProperty(SYSPROP_STATEFILE_LOCATION);
       }
       String workspaceResolver = properties.get("workspaceResolver");
       if (isFile(workspaceState) && isFile(workspaceResolver)) {
