@@ -45,9 +45,7 @@
     <plugins>
       <plugin>
         <groupId>io.takari.maven.plugins</groupId>
-        <artifactId>takari-plugin-testing-plugin</artifactId>
-        <version>1.9.2</version>
-        <extensions>true</extensions>
+        <artifactId>takari-lifecycle-plugin</artifactId>
         <executions>
           <execution>
             <id>testProperties</id>
