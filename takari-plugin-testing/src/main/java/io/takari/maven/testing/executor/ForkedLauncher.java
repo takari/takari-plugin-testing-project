@@ -42,6 +42,7 @@ import org.apache.commons.exec.DefaultExecutor;
 import org.apache.commons.exec.ExecuteException;
 import org.apache.commons.exec.PumpStreamHandler;
 import org.apache.commons.exec.ShutdownHookProcessDestroyer;
+import org.codehaus.plexus.util.Os;
 
 /**
  * @author Benjamin Bentmann
@@ -50,7 +51,7 @@ class ForkedLauncher implements MavenLauncher {
 
   private final File mavenHome;
 
-  private final File executable;
+  private final File classworldsJar;
 
   private final Map<String, String> envVars;
 
@@ -70,17 +71,46 @@ class ForkedLauncher implements MavenLauncher {
     this.mavenHome = mavenHome;
     this.envVars = envVars;
     this.extensions = extensions;
-    this.executable = new File(mavenHome, "bin/mvn");
+
+    File classworldsJar = null;
+    File[] files = new File(mavenHome, "boot").listFiles();
+    if (files != null) {
+      for (File file : files) {
+        String name = file.getName();
+        if (name.startsWith("plexus-classworlds-") && name.endsWith(".jar")) {
+          classworldsJar = file;
+          break;
+        }
+      }
+    }
+    if (classworldsJar == null) {
+      throw new IllegalArgumentException("Invalid maven home " + mavenHome);
+    }
+    this.classworldsJar = classworldsJar;
   }
 
   public int run(String[] cliArgs, Map<String, String> envVars, File workingDirectory, File logFile) throws IOException, LauncherException {
-    CommandLine cli = new CommandLine(executable);
-    cli.addArguments(args.toArray(new String[args.size()]));
-    cli.addArguments(cliArgs);
+    String javaHome;
+    if (envVars == null || envVars.get("JAVA_HOME") == null) {
+      javaHome = System.getProperty("java.home");
+    } else {
+      javaHome = envVars.get("JAVA_HOME");
+    }
 
+    File executable = new File(javaHome, Os.isFamily(Os.FAMILY_WINDOWS) ? "bin/javaw.exe" : "bin/java");
+
+    CommandLine cli = new CommandLine(executable);
+    cli.addArgument("-classpath").addArgument(classworldsJar.getAbsolutePath());
+    cli.addArgument("-Dclassworlds.conf=" + new File(mavenHome, "bin/m2.conf").getAbsolutePath());
+    cli.addArgument("-Dmaven.home=" + mavenHome.getAbsolutePath());
+    cli.addArgument("org.codehaus.plexus.classworlds.launcher.Launcher");
+
+    cli.addArguments(args.toArray(new String[args.size()]));
     if (extensions != null && !extensions.isEmpty()) {
       cli.addArgument("-Dmaven.ext.class.path=" + toPath(extensions));
     }
+
+    cli.addArguments(cliArgs);
 
     Map<String, String> env = new HashMap<>();
     if (mavenHome != null) {
@@ -92,7 +122,6 @@ class ForkedLauncher implements MavenLauncher {
     if (envVars == null || envVars.get("JAVA_HOME") == null) {
       env.put("JAVA_HOME", System.getProperty("java.home"));
     }
-    env.put("MAVEN_TERMINATE_CMD", "on");
 
     DefaultExecutor executor = new DefaultExecutor();
     executor.setProcessDestroyer(new ShutdownHookProcessDestroyer());

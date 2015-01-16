@@ -53,7 +53,7 @@ public class BasicIntegrationTest {
   @Test
   public void test() throws Exception {
     maven.forProject(resources.getBasedir("basic")) //
-        .withCliOptions("-DmavenVersion=" + version) //
+        .withCliOptions("-B", "-e", "-DmavenVersion=" + version) //
         .execute("package") //
         .assertErrorFreeLog();
   }
