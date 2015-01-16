@@ -56,6 +56,14 @@ public class MavenRuntime {
       // TODO decide if workspace resolution must be enabled and enforced
     }
 
+    MavenRuntimeBuilder(File mavenHome, File classworldsConf, List<String> extensions, List<String> args) {
+      this.properties = new TestProperties();
+      this.mavenHome = mavenHome;
+      this.classworldsConf = classworldsConf;
+      this.extensions.addAll(extensions);
+      this.args.addAll(args);
+    }
+
     private static boolean isFile(String path) {
       return path != null && new File(path).isFile();
     }
@@ -98,9 +106,7 @@ public class MavenRuntime {
     }
 
     ForkedMavenRuntimeBuilder(File mavenHome, File classworldsConf, List<String> extensions, List<String> args) {
-      super(mavenHome, classworldsConf);
-      this.extensions.addAll(extensions);
-      this.args.addAll(args);
+      super(mavenHome, classworldsConf, extensions, args);
     }
 
     public ForkedMavenRuntimeBuilder withEnvironment(Map<String, String> environment) {
