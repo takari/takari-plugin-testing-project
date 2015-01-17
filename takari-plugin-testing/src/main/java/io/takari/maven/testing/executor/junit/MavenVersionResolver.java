@@ -79,10 +79,14 @@ abstract class MavenVersionResolver {
           }
           int mode = entry.getMode();
           if (mode != -1 && (mode & 0100) != 0) {
-            Path path = file.toPath();
-            Set<PosixFilePermission> permissions = Files.getPosixFilePermissions(path);
-            permissions.add(PosixFilePermission.OWNER_EXECUTE);
-            Files.setPosixFilePermissions(path, permissions);
+            try {
+              Path path = file.toPath();
+              Set<PosixFilePermission> permissions = Files.getPosixFilePermissions(path);
+              permissions.add(PosixFilePermission.OWNER_EXECUTE);
+              Files.setPosixFilePermissions(path, permissions);
+            } catch (UnsupportedOperationException e) {
+              // must be windows, ignore
+            }
           }
         }
       }
