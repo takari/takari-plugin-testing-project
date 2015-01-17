@@ -4,6 +4,12 @@ import io.takari.maven.testing.TestResources;
 import io.takari.maven.testing.executor.MavenRuntime;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.UnsupportedEncodingException;
+import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -52,10 +58,18 @@ public class BasicIntegrationTest {
 
   @Test
   public void test() throws Exception {
-    maven.forProject(resources.getBasedir("basic")) //
+    File basedir = resources.getBasedir("basic");
+    write(new File(basedir, "src/test/java/basic/TargetVersion.java"),
+        "package basic; class TargetVersion { static final String VERSION = \"" + version + "\"; }");
+    maven.forProject(basedir) //
         .withCliOptions("-B", "-e", "-DmavenVersion=" + version) //
         .execute("package") //
         .assertErrorFreeLog();
   }
 
+  private void write(File file, String string) throws IOException {
+    try (Writer w = new OutputStreamWriter(new FileOutputStream(file), "UTF-8")) {
+      w.write(string);
+    }
+  }
 }
