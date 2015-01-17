@@ -4,11 +4,9 @@ import io.takari.maven.testing.TestResources;
 import io.takari.maven.testing.executor.MavenRuntime;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
-import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
