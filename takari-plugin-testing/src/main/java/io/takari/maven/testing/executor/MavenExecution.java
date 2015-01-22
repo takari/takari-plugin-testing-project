@@ -40,7 +40,8 @@ public class MavenExecution {
       args.add(userSettings.getAbsolutePath());
     }
     args.add("-Dmaven.repo.local=" + properties.getLocalRepository().getAbsolutePath());
-    args.add("-Dit-plugin.version=" + properties.getPluginVersion());
+    args.add("-Dit-plugin.version=" + properties.getPluginVersion()); // TODO deprecated and remove
+    args.add("-Dit-project.version=" + properties.getPluginVersion());
     args.addAll(cliOptions);
 
     for (String goal : goals) {
