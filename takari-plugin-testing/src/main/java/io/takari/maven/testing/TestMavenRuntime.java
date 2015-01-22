@@ -10,15 +10,15 @@ package io.takari.maven.testing;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
 import org.apache.maven.artifact.versioning.DefaultArtifactVersion;
+import org.apache.maven.artifact.versioning.InvalidVersionSpecificationException;
+import org.apache.maven.artifact.versioning.VersionRange;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.Mojo;
 import org.apache.maven.plugin.MojoExecution;
@@ -58,50 +58,46 @@ public class TestMavenRuntime implements TestRule {
     MavenRuntime newInstance(Module[] modules) throws Exception;
   }
 
-  // minimal supported maven version
-  private static final DefaultArtifactVersion MINIMAL_VERSION;
-
   // ordered map of supported maven runtime factories
-  private static final Map<DefaultArtifactVersion, RuntimeFactory> FACTORIES;
+  private static final Map<VersionRange, RuntimeFactory> FACTORIES;
 
   static {
-    MINIMAL_VERSION = new DefaultArtifactVersion("3.0");
-    Map<DefaultArtifactVersion, RuntimeFactory> factories = new LinkedHashMap<>();
-    // [3.0,3.1.1)
-    factories.put(new DefaultArtifactVersion("3.1.1"), new RuntimeFactory() {
-      @Override
-      public MavenRuntime newInstance(Module[] modules) throws Exception {
-        return new Maven30xRuntime(modules);
-      }
-    });
-    // [3.1.1,3.2.1)
-    factories.put(new DefaultArtifactVersion("3.2.1"), new RuntimeFactory() {
-      @Override
-      public MavenRuntime newInstance(Module[] modules) throws Exception {
-        return new Maven311Runtime(modules);
-      }
-    });
-    // [3.2.1,3.2.5)
-    factories.put(new DefaultArtifactVersion("3.2.5"), new RuntimeFactory() {
-      @Override
-      public MavenRuntime newInstance(Module[] modules) throws Exception {
-        return new Maven321Runtime(modules);
-      }
-    });
-    // [3.2.5,3.2.5]
-    factories.put(new DefaultArtifactVersion("3.2.6"), new RuntimeFactory() {
-      @Override
-      public MavenRuntime newInstance(Module[] modules) throws Exception {
-        return new Maven325Runtime(modules);
-      }
-    });
-    // the last entry is expected to handle every thing else
-    factories.put(null, new RuntimeFactory() {
-      @Override
-      public MavenRuntime newInstance(Module[] modules) throws Exception {
-        return new Maven326Runtime(modules);
-      }
-    });
+    Map<VersionRange, RuntimeFactory> factories = new LinkedHashMap<>();
+    try {
+      factories.put(VersionRange.createFromVersionSpec("[3.0,3.1.1)"), new RuntimeFactory() {
+        @Override
+        public MavenRuntime newInstance(Module[] modules) throws Exception {
+          return new Maven30xRuntime(modules);
+        }
+      });
+      factories.put(VersionRange.createFromVersionSpec("[3.1.1,3.2.1)"), new RuntimeFactory() {
+        @Override
+        public MavenRuntime newInstance(Module[] modules) throws Exception {
+          return new Maven311Runtime(modules);
+        }
+      });
+      factories.put(VersionRange.createFromVersionSpec("[3.2.1,3.2.5)"), new RuntimeFactory() {
+        @Override
+        public MavenRuntime newInstance(Module[] modules) throws Exception {
+          return new Maven321Runtime(modules);
+        }
+      });
+      factories.put(VersionRange.createFromVersionSpec("[3.2.5]"), new RuntimeFactory() {
+        @Override
+        public MavenRuntime newInstance(Module[] modules) throws Exception {
+          return new Maven325Runtime(modules);
+        }
+      });
+      // the last entry is expected to handle everything else
+      factories.put(VersionRange.createFromVersionSpec("(3.2.5,]"), new RuntimeFactory() {
+        @Override
+        public MavenRuntime newInstance(Module[] modules) throws Exception {
+          return new Maven326Runtime(modules);
+        }
+      });
+    } catch (InvalidVersionSpecificationException e) {
+      throw new RuntimeException(e);
+    }
     FACTORIES = Collections.unmodifiableMap(factories);
   }
 
@@ -133,17 +129,12 @@ public class TestMavenRuntime implements TestRule {
   }
 
   private MavenRuntime newMavenRuntime(Module[] modules) throws Exception {
-    if (MAVEN_VERSION.compareTo(MINIMAL_VERSION) < 0) {
-      throw new AssertionError(String.format("Maven version %s is not supported, please use %s or newer", MAVEN_VERSION, MINIMAL_VERSION));
-    }
-    List<Map.Entry<DefaultArtifactVersion, RuntimeFactory>> versions = new ArrayList<>(FACTORIES.entrySet());
-    for (int i = 0; i < versions.size() - 1; i++) {
-      Map.Entry<DefaultArtifactVersion, RuntimeFactory> entry = versions.get(i);
-      if (MAVEN_VERSION.compareTo(entry.getKey()) < 0) {
+    for (Map.Entry<VersionRange, RuntimeFactory> entry : FACTORIES.entrySet()) {
+      if (entry.getKey().containsVersion(MAVEN_VERSION)) {
         return entry.getValue().newInstance(modules);
       }
     }
-    return versions.get(versions.size() - 1).getValue().newInstance(modules);
+    throw new AssertionError(String.format("Maven version %s is not supported, supprted versions: %s", MAVEN_VERSION, FACTORIES.entrySet()));
   }
 
   public MavenProject readMavenProject(File basedir) throws Exception {
