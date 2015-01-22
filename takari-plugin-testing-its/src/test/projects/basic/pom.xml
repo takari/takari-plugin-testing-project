@@ -21,7 +21,7 @@
     <takariLifecycleVersion>1.10.1</takariLifecycleVersion>
     <mavenVersion>3.2.5</mavenVersion>
     <mavenPluginPluginVersion>3.3</mavenPluginPluginVersion>
-    <it-project.version>2.1.0-SNAPSHOT</it-project.version>
+    <it-project.version>2.2.0-SNAPSHOT</it-project.version>
   </properties>
 
   <dependencies>
