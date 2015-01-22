@@ -32,9 +32,12 @@ package io.takari.maven.testing;
 import static org.junit.Assert.assertNotNull;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStreamWriter;
 import java.lang.reflect.Constructor;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -190,7 +193,22 @@ class Maven30xRuntime implements MavenRuntime {
     MavenExecutionRequest request = new DefaultMavenExecutionRequest();
     request.setBaseDirectory(basedir);
     ProjectBuildingRequest configuration = request.getProjectBuildingRequest();
-    return container.lookup(ProjectBuilder.class).build(pom, configuration).getProject();
+    return container.lookup(ProjectBuilder.class).build(getPomFile(pom), configuration).getProject();
+  }
+
+  protected File getPomFile(File pom) throws IOException {
+    if (!pom.exists()) {
+      try (BufferedWriter w = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(pom), "UTF-8"))) {
+        w.write("<?xml version='1.0' encoding='UTF-8'?>\n");
+        w.write("<project>\n");
+        w.write("<modelVersion>4.0.0</modelVersion>\n");
+        w.write("<groupId>test</groupId>\n");
+        w.write("<artifactId>test</artifactId>\n");
+        w.write("<version>1</version>\n");
+        w.write("</project>\n");
+      }
+    }
+    return pom;
   }
 
   @Override

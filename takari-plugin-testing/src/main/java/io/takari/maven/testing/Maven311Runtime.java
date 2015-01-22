@@ -33,7 +33,7 @@ class Maven311Runtime extends Maven30xRuntime {
     request.setBaseDirectory(basedir);
     ProjectBuildingRequest configuration = request.getProjectBuildingRequest();
     configuration.setRepositorySession(new DefaultRepositorySystemSession());
-    return container.lookup(ProjectBuilder.class).build(pom, configuration).getProject();
+    return container.lookup(ProjectBuilder.class).build(getPomFile(pom), configuration).getProject();
   }
 
   @Override

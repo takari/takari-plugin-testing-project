@@ -79,12 +79,27 @@ public class TestResources extends TestWatcher {
     if (name == null) {
       throw new IllegalStateException(getClass().getSimpleName() + " must be a test class field annotated with org.junit.Rule");
     }
-    File src = new File(projectsDir, project).getCanonicalFile();
-    Assert.assertTrue("Test project directory does not exist: " + src.getPath(), src.isDirectory());
     File basedir = new File(workDir, name + "_" + project).getCanonicalFile();
     FileUtils.deleteDirectory(basedir);
     Assert.assertTrue("Test project working directory created", basedir.mkdirs());
+    File src = new File(projectsDir, project).getCanonicalFile();
+    Assert.assertTrue("Test project directory does not exist: " + src.getPath(), src.isDirectory());
     FileUtils.copyDirectoryStructure(src, basedir);
+    return basedir;
+  }
+
+  /**
+   * Creates new clean test work directory. The directory is named after test being executed.
+   * 
+   * @since 2.2
+   */
+  public File getBasedir() throws IOException {
+    if (name == null) {
+      throw new IllegalStateException(getClass().getSimpleName() + " must be a test class field annotated with org.junit.Rule");
+    }
+    File basedir = new File(workDir, name).getCanonicalFile();
+    FileUtils.deleteDirectory(basedir);
+    Assert.assertTrue("Test project working directory created", basedir.mkdirs());
     return basedir;
   }
 

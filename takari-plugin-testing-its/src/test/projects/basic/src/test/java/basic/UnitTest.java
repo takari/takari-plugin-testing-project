@@ -23,4 +23,10 @@ public class UnitTest {
     TestResources.assertFilesPresent(basedir, "target/output.txt");
   }
 
+  @Test
+  public void testPomless() throws Exception {
+    File basedir = resources.getBasedir();
+    maven.executeMojo(basedir, "basic");
+    TestResources.assertFilesPresent(basedir, "target/output.txt");
+  }
 }
