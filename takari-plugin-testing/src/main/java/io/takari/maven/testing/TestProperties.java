@@ -7,6 +7,8 @@
  */
 package io.takari.maven.testing;
 
+import io.takari.maven.testing.executor.MavenRuntime.MavenRuntimeBuilder;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -96,6 +98,8 @@ public class TestProperties {
 
   /**
    * Returns location of the current project classes, i.e. target/classes directory, and all project dependencies with scope=runtime.
+   * <p>
+   * Useful for testing maven core extensions, {@link MavenRuntimeBuilder#withExtensions(java.util.Collection)}
    */
   public List<File> getRuntimeClasspath() {
     StringTokenizer st = new StringTokenizer(properties.get(PROP_CLASSPATH), File.pathSeparator);
