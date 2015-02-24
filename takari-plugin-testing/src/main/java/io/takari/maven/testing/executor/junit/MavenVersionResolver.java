@@ -126,12 +126,21 @@ abstract class MavenVersionResolver {
     }
     Exception cause = null;
     for (URL repository : repositories) {
-      String effectiveVersion = version;
+      String effectiveVersion;
       if (version.endsWith("-SNAPSHOT")) {
-        effectiveVersion = getQualifiedVersion(repository, versionDir);
-      }
-      if (effectiveVersion == null) {
-        continue;
+        try {
+          effectiveVersion = getQualifiedVersion(repository, versionDir);
+        } catch (FileNotFoundException e) {
+          continue;
+        } catch (IOException e) {
+          cause = e;
+          continue;
+        }
+        if (effectiveVersion == null) {
+          continue;
+        }
+      } else {
+        effectiveVersion = version;
       }
       filename = "apache-maven-" + effectiveVersion + "-bin.tar.gz";
       archive = new File(localrepo, versionDir + filename);
@@ -174,8 +183,6 @@ abstract class MavenVersionResolver {
       }
       version = version.trim();
       return version.isEmpty() ? null : version;
-    } catch (FileNotFoundException e) {
-      return null;
     }
   }
 
