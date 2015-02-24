@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.StringReader;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.file.Files;
@@ -168,9 +169,16 @@ abstract class MavenVersionResolver {
 
   private InputStream openStream(URL resource) throws IOException {
     URLConnection connection = resource.openConnection();
-    // for some reason, nexus version 2.11.1-01 returns partial maven-metadata.xml
-    // unless request User-Agent header is set to non-default value
-    connection.addRequestProperty("User-Agent", "takari-plugin-testing");
+    if (connection instanceof HttpURLConnection) {
+      // for some reason, nexus version 2.11.1-01 returns partial maven-metadata.xml
+      // unless request User-Agent header is set to non-default value
+      connection.addRequestProperty("User-Agent", "takari-plugin-testing");
+      int responseCode = ((HttpURLConnection) connection).getResponseCode();
+      if (responseCode < 200 || responseCode > 299) {
+        String responseMessage = ((HttpURLConnection) connection).getResponseMessage();
+        throw new IOException(String.format("HTTP/%d %s", responseCode, responseMessage));
+      }
+    }
     return connection.getInputStream();
   }
 
