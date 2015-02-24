@@ -187,8 +187,8 @@ abstract class MavenVersionResolver {
       connection.addRequestProperty("User-Agent", "takari-plugin-testing");
       int responseCode = ((HttpURLConnection) connection).getResponseCode();
       if (responseCode < 200 || responseCode > 299) {
-        String responseMessage = ((HttpURLConnection) connection).getResponseMessage();
-        throw new IOException(String.format("HTTP/%d %s", responseCode, responseMessage));
+        String message = String.format("HTTP/%d %s", responseCode, ((HttpURLConnection) connection).getResponseMessage());
+        throw responseCode == HttpURLConnection.HTTP_NOT_FOUND ? new FileNotFoundException(message) : new IOException(message);
       }
     }
     return connection.getInputStream();
