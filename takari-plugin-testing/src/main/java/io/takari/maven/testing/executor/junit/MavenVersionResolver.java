@@ -25,6 +25,7 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.nio.file.attribute.PosixFilePermission;
 import java.util.Collection;
 import java.util.LinkedHashSet;
@@ -51,14 +52,10 @@ abstract class MavenVersionResolver {
         if (repositories == null) {
           repositories = getRepositories(properties);
         }
-        File archive = null;
         try {
-          archive = downloadMaven(properties.getLocalRepository(), repositories, version);
+          createMavenInstallation(repositories, version, properties.getLocalRepository(), basdir);
         } catch (Exception e) {
           error(version, e);
-        }
-        if (archive != null) {
-          unarchive(archive, basdir);
         }
       }
       if (mavenHome.isDirectory()) {
@@ -119,13 +116,15 @@ abstract class MavenVersionResolver {
     return !value.isEmpty() ? value : null;
   }
 
-  private File downloadMaven(File targetdir, Collection<URL> repositories, String version) throws Exception {
+  private void createMavenInstallation(Collection<URL> repositories, String version, File localrepo, File targetdir) throws Exception {
     String versionDir = "org/apache/maven/apache-maven/" + version + "/";
     String filename = "apache-maven-" + version + "-bin.tar.gz";
-    File file = new File(targetdir, versionDir + filename);
-    if (file.canRead()) {
-      return file;
+    File archive = new File(localrepo, versionDir + filename);
+    if (archive.canRead()) {
+      unarchive(archive, targetdir);
+      return;
     }
+    Exception cause = null;
     for (URL repository : repositories) {
       String effectiveVersion = version;
       if (version.endsWith("-SNAPSHOT")) {
@@ -135,19 +134,32 @@ abstract class MavenVersionResolver {
         continue;
       }
       filename = "apache-maven-" + effectiveVersion + "-bin.tar.gz";
-      file = new File(targetdir, versionDir + filename);
-      if (file.canRead()) {
-        return file;
+      archive = new File(localrepo, versionDir + filename);
+      if (archive.canRead()) {
+        unarchive(archive, targetdir);
+        return;
       }
       URL resource = new URL(repository, versionDir + filename);
       try (InputStream is = openStream(resource)) {
-        copy(is, file);
-        return file;
+        archive.getParentFile().mkdirs();
+        File tmpfile = File.createTempFile(filename, ".tmp", archive.getParentFile());
+        try {
+          copy(is, tmpfile);
+          unarchive(tmpfile, targetdir);
+          Files.move(tmpfile.toPath(), archive.toPath(), StandardCopyOption.ATOMIC_MOVE, StandardCopyOption.REPLACE_EXISTING);
+        } finally {
+          tmpfile.delete();
+        }
+        return;
       } catch (FileNotFoundException e) {
-        // try next repository, if any
+        // ignore the exception. this is expected to happen quite often and not a failure by iteself
+      } catch (IOException e) {
+        cause = e;
       }
     }
-    throw new FileNotFoundException("Could not download maven version " + version + " from any configured repository");
+    Exception exception = new FileNotFoundException("Could not download maven version " + version + " from any configured repository");
+    exception.initCause(cause);
+    throw exception;
   }
 
   private String getQualifiedVersion(URL repository, String versionDir) throws Exception {
