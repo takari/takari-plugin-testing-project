@@ -29,8 +29,14 @@ package io.takari.maven.testing;
  */
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -203,6 +209,21 @@ public class TestResources extends TestWatcher {
       }
       Assert.assertEquals(expected.toString(), actual.toString());
     }
+  }
+
+  /**
+   * @since 2.2
+   */
+  public static Map<String, String> readProperties(File basedir, String path) throws IOException {
+    Properties properties = new Properties();
+    try (InputStream is = new FileInputStream(new File(basedir, path))) {
+      properties.load(is);
+    }
+    Map<String, String> result = new HashMap<>();
+    for (String key : properties.stringPropertyNames()) {
+      result.put(key, properties.getProperty(key));
+    }
+    return Collections.unmodifiableMap(result);
   }
 
 }
