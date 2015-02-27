@@ -103,6 +103,7 @@ class ForkedLauncher implements MavenLauncher {
     cli.addArgument("-classpath").addArgument(classworldsJar.getAbsolutePath());
     cli.addArgument("-Dclassworlds.conf=" + new File(mavenHome, "bin/m2.conf").getAbsolutePath());
     cli.addArgument("-Dmaven.home=" + mavenHome.getAbsolutePath());
+    cli.addArgument("-Dmaven.multiModuleProjectDirectory=" + workingDirectory.getAbsolutePath());
     cli.addArgument("org.codehaus.plexus.classworlds.launcher.Launcher");
 
     cli.addArguments(args.toArray(new String[args.size()]));

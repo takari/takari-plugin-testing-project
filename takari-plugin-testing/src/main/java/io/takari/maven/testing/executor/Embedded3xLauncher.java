@@ -342,6 +342,7 @@ class Embedded3xLauncher implements MavenLauncher {
       System.setProperties(null);
       System.setProperty(SYSPROP_MAVEN_HOME, mavenHome.getAbsolutePath());
       System.setProperty("user.dir", workingDirectory.getAbsolutePath());
+      System.setProperty("maven.multiModuleProjectDirectory", workingDirectory.getAbsolutePath());
 
       ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
       Thread.currentThread().setContextClassLoader(mavenCli.getClass().getClassLoader());
