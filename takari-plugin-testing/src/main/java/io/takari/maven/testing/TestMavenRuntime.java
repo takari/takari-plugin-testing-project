@@ -92,7 +92,7 @@ public class TestMavenRuntime implements TestRule {
       factories.put(VersionRange.createFromVersionSpec("(3.2.5,]"), new RuntimeFactory() {
         @Override
         public MavenRuntime newInstance(Module[] modules) throws Exception {
-          return new Maven326Runtime(modules);
+          return new Maven331Runtime(modules);
         }
       });
     } catch (InvalidVersionSpecificationException e) {

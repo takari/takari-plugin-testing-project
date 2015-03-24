@@ -37,7 +37,7 @@ public class BasicIntegrationTest {
     // parameters.add(new Object[] {"3.2.1"}); see https://jira.codehaus.org/browse/MNG-5591
     parameters.add(new Object[] {"3.2.2"});
     parameters.add(new Object[] {"3.2.5"});
-    parameters.add(new Object[] {"3.2.6-SNAPSHOT"});
+    parameters.add(new Object[] {"3.3.1"});
     return parameters;
   }
 

@@ -14,9 +14,9 @@ import org.codehaus.plexus.configuration.xml.XmlPlexusConfiguration;
 
 import com.google.inject.Module;
 
-class Maven326Runtime extends Maven325Runtime {
+class Maven331Runtime extends Maven325Runtime {
 
-  public Maven326Runtime(Module[] modules) throws Exception {
+  public Maven331Runtime(Module[] modules) throws Exception {
     super(modules);
   }
 
