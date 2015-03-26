@@ -43,6 +43,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -107,35 +108,41 @@ class Maven30xRuntime implements MavenRuntime {
   }
 
   private Map<String, MojoDescriptor> readPluginXml(DefaultPlexusContainer container) throws Exception {
-    InputStream is = getClass().getResourceAsStream("/" + PATH_PLUGINXML);
-
-    if (is == null) {
-      return Collections.emptyMap();
-    }
-
-    XmlStreamReader reader = new XmlStreamReader(is);
-
-    @SuppressWarnings("rawtypes")
-    Map contextData = container.getContext().getContextData();
-    @SuppressWarnings("unchecked")
-    InterpolationFilterReader interpolationFilterReader = new InterpolationFilterReader(new BufferedReader(reader), contextData);
-
-    PluginDescriptor pluginDescriptor = new PluginDescriptorBuilder().build(interpolationFilterReader);
-
-    Artifact artifact = container.lookup(RepositorySystem.class) //
-        .createArtifact(pluginDescriptor.getGroupId(), pluginDescriptor.getArtifactId(), pluginDescriptor.getVersion(), ".jar");
-
-    artifact.setFile(getPluginArtifactFile());
-    pluginDescriptor.setPluginArtifact(artifact);
-    pluginDescriptor.setArtifacts(Arrays.asList(artifact));
-
-    for (ComponentDescriptor<?> desc : pluginDescriptor.getComponents()) {
-      container.addComponentDescriptor(desc);
-    }
-
     Map<String, MojoDescriptor> mojoDescriptors = new HashMap<String, MojoDescriptor>();
-    for (MojoDescriptor mojoDescriptor : pluginDescriptor.getMojos()) {
-      mojoDescriptors.put(mojoDescriptor.getGoal(), mojoDescriptor);
+    Enumeration<URL> resources = getClass().getClassLoader().getResources(PATH_PLUGINXML);
+    while (resources.hasMoreElements()) {
+      InputStream is = resources.nextElement().openStream();
+
+      if (is == null) {
+        return Collections.emptyMap();
+      }
+
+      XmlStreamReader reader = new XmlStreamReader(is);
+
+      @SuppressWarnings("rawtypes")
+      Map contextData = container.getContext().getContextData();
+      @SuppressWarnings("unchecked")
+      InterpolationFilterReader interpolationFilterReader = new InterpolationFilterReader(new BufferedReader(reader), contextData);
+
+      PluginDescriptor pluginDescriptor = new PluginDescriptorBuilder().build(interpolationFilterReader);
+
+      Artifact artifact = container.lookup(RepositorySystem.class) //
+          .createArtifact(pluginDescriptor.getGroupId(), pluginDescriptor.getArtifactId(), pluginDescriptor.getVersion(), ".jar");
+
+      artifact.setFile(getPluginArtifactFile());
+      pluginDescriptor.setPluginArtifact(artifact);
+      pluginDescriptor.setArtifacts(Arrays.asList(artifact));
+
+      for (ComponentDescriptor<?> desc : pluginDescriptor.getComponents()) {
+        container.addComponentDescriptor(desc);
+      }
+
+      for (MojoDescriptor mojoDescriptor : pluginDescriptor.getMojos()) {
+        // TODO decide how to handle duplicate goals
+        // this is possible when one plugin extends another
+        // for example, Tycho 'compile' goal is an extension of standard maven 'compile'
+        mojoDescriptors.put(mojoDescriptor.getGoal(), mojoDescriptor);
+      }
     }
     return mojoDescriptors;
   }
