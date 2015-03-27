@@ -46,6 +46,11 @@ abstract class MavenVersionResolver {
     Collection<URL> repositories = null;
     TestProperties properties = new TestProperties();
     for (String version : versions) {
+      // refuse to test with SNAPSHOT maven version when build RELEASE plugins
+      if (isSnapshot(version) && !isSnapshot(properties.getPluginVersion())) {
+        String msg = String.format("Cannot test %s plugin release with %s maven", properties.getPluginVersion(), version);
+        error(version, new IllegalStateException(msg));
+      }
       File basdir = new File("target/maven-installation").getCanonicalFile();
       File mavenHome = new File(basdir, "apache-maven-" + version).getCanonicalFile();
       if (!mavenHome.isDirectory()) {
@@ -62,6 +67,10 @@ abstract class MavenVersionResolver {
         resolved(mavenHome, version);
       }
     }
+  }
+
+  private boolean isSnapshot(String version) {
+    return version != null && version.endsWith("-SNAPSHOT");
   }
 
   private void unarchive(File archive, File directory) throws IOException {
@@ -127,7 +136,7 @@ abstract class MavenVersionResolver {
     Exception cause = null;
     for (URL repository : repositories) {
       String effectiveVersion;
-      if (version.endsWith("-SNAPSHOT")) {
+      if (isSnapshot(version)) {
         try {
           effectiveVersion = getQualifiedVersion(repository, versionDir);
         } catch (FileNotFoundException e) {
