@@ -7,8 +7,7 @@
  */
 package io.takari.maven.testing.executor;
 
-import static org.eclipse.m2e.workspace.WorkspaceState.SYSPROP_STATEFILE_LOCATION;
-import io.takari.maven.testing.TestProperties;
+import static org.eclipse.m2e.workspace.WorkspaceState2.SYSPROP_STATEFILE_LOCATION;
 
 import java.io.File;
 import java.io.IOException;
@@ -17,6 +16,8 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import io.takari.maven.testing.TestProperties;
 
 public class MavenRuntime {
 
@@ -41,19 +42,31 @@ public class MavenRuntime {
       this.mavenHome = mavenHome;
       this.classworldsConf = classworldsConf;
 
-      String workspaceState = properties.get("workspaceStateProperties");
-      if (workspaceState == null) {
-        workspaceState = System.getProperty(SYSPROP_STATEFILE_LOCATION);
-      }
+      StringBuilder workspaceState = new StringBuilder();
+      appendLocation(workspaceState, System.getProperty(SYSPROP_STATEFILE_LOCATION));
+      appendLocation(workspaceState, properties.get("workspaceStateProperties"));
+
       String workspaceResolver = properties.get("workspaceResolver");
-      if (isFile(workspaceState) && isFile(workspaceResolver)) {
+      if (workspaceState.length() > 0 && isFile(workspaceResolver)) {
         if ("3.2.1".equals(MavenInstallationUtils.getMavenVersion(mavenHome, classworldsConf))) {
           throw new IllegalArgumentException("Maven 3.2.1 is not supported, see https://jira.codehaus.org/browse/MNG-5591");
         }
-        args.add("-D" + SYSPROP_STATEFILE_LOCATION + "=" + workspaceState);
+        args.add("-D" + SYSPROP_STATEFILE_LOCATION + "=" + workspaceState.toString());
         extensions.add(workspaceResolver);
       }
       // TODO decide if workspace resolution must be enabled and enforced
+    }
+
+    private void appendLocation(StringBuilder workspaceState, String location) {
+      if (location != null) {
+        if (!isFile(location)) {
+          throw new IllegalArgumentException("Not a file " + location);
+        }
+        if (workspaceState.length() > 0) {
+          workspaceState.append(File.pathSeparator);
+        }
+        workspaceState.append(location);
+      }
     }
 
     MavenRuntimeBuilder(File mavenHome, File classworldsConf, List<String> extensions, List<String> args) {
