@@ -13,9 +13,14 @@ import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 
+import org.apache.maven.artifact.Artifact;
+import org.apache.maven.artifact.DefaultArtifact;
+import org.apache.maven.artifact.handler.ArtifactHandler;
 import org.apache.maven.artifact.versioning.DefaultArtifactVersion;
 import org.apache.maven.artifact.versioning.InvalidVersionSpecificationException;
 import org.apache.maven.artifact.versioning.VersionRange;
@@ -103,6 +108,53 @@ public class TestMavenRuntime implements TestRule {
 
   private final Module[] modules;
   private MavenRuntime runtime;
+
+  public class TestDependency {
+
+    private final File file;
+    private String groupId = "test";
+    private String artifactId;
+    private String version = "1.0";
+    private String type = "jar";
+
+    private TestDependency(File artifact) {
+      this.file = artifact;
+      this.artifactId = artifact.getName();
+    }
+
+    public TestDependency setArtifactId(String artifactId) {
+      this.artifactId = artifactId;
+
+      return this;
+    }
+
+    public TestDependency setGroupId(String groupId) {
+      this.groupId = groupId;
+
+      return this;
+    }
+
+    public TestDependency addTo(MavenProject project) throws Exception {
+      return addTo(project, true);
+    }
+
+    public TestDependency addTo(MavenProject project, boolean direct) throws Exception {
+      ArtifactHandler handler = getContainer().lookup(ArtifactHandler.class, type);
+      DefaultArtifact artifact = new DefaultArtifact(groupId, artifactId, version, Artifact.SCOPE_COMPILE, type, null, handler);
+      artifact.setFile(file);
+      Set<Artifact> artifacts = project.getArtifacts();
+      artifacts.add(artifact);
+      project.setArtifacts(artifacts);
+      if (direct) {
+        Set<Artifact> directDependencies = project.getDependencyArtifacts();
+        directDependencies = directDependencies == null ? new LinkedHashSet<Artifact>() : new LinkedHashSet<>(directDependencies);
+        directDependencies.add(artifact);
+        project.setDependencyArtifacts(directDependencies);
+      }
+
+      return this;
+    }
+  }
 
   public TestMavenRuntime() {
     this(new Module[0]);
@@ -196,6 +248,10 @@ public class TestMavenRuntime implements TestRule {
     Xpp3Dom child = new Xpp3Dom(name);
     child.setValue(value);
     return child;
+  }
+
+  public TestDependency newDependency(File artifact) {
+    return new TestDependency(artifact);
   }
 
 }
