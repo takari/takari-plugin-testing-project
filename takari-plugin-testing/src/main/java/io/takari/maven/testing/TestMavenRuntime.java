@@ -134,6 +134,12 @@ public class TestMavenRuntime implements TestRule {
       return this;
     }
 
+    public TestDependency setType(String type) {
+      this.type = type;
+
+      return this;
+    }
+
     public TestDependency addTo(MavenProject project) throws Exception {
       return addTo(project, true);
     }
