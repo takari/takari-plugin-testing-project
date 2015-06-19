@@ -116,6 +116,7 @@ public class TestMavenRuntime implements TestRule {
     private String artifactId;
     private String version = "1.0";
     private String type = "jar";
+    private boolean optional;
 
     private TestDependency(File artifact) {
       this.file = artifact;
@@ -140,6 +141,12 @@ public class TestMavenRuntime implements TestRule {
       return this;
     }
 
+    public TestDependency setOptional(boolean optional) {
+      this.optional = optional;
+
+      return this;
+    }
+
     public TestDependency addTo(MavenProject project) throws Exception {
       return addTo(project, true);
     }
@@ -148,6 +155,7 @@ public class TestMavenRuntime implements TestRule {
       ArtifactHandler handler = getContainer().lookup(ArtifactHandler.class, type);
       DefaultArtifact artifact = new DefaultArtifact(groupId, artifactId, version, Artifact.SCOPE_COMPILE, type, null, handler);
       artifact.setFile(file);
+      artifact.setOptional(optional);
       Set<Artifact> artifacts = project.getArtifacts();
       artifacts.add(artifact);
       project.setArtifacts(artifacts);
