@@ -33,11 +33,16 @@ public class BasicIntegrationTest {
   public static List<Object[]> versions() {
     List<Object[]> parameters = new ArrayList<>();
     parameters.add(new Object[] {"3.0.5"});
+    // parameters.add(new Object[] {"3.1.0"}); not supported unless someone asks real nice
     parameters.add(new Object[] {"3.1.1"});
     // parameters.add(new Object[] {"3.2.1"}); see https://jira.codehaus.org/browse/MNG-5591
     parameters.add(new Object[] {"3.2.2"});
+    parameters.add(new Object[] {"3.2.3"});
+    // parameters.add(new Object[] {"3.2.4"}); was never released
     parameters.add(new Object[] {"3.2.5"});
     parameters.add(new Object[] {"3.3.1"});
+    // parameters.add(new Object[] {"3.3.2"}); was never released
+    parameters.add(new Object[] {"3.3.3"});
     return parameters;
   }
 
