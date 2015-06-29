@@ -3,16 +3,39 @@ package io.takari.maven.testing;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.execution.MojoExecutionEvent;
 import org.apache.maven.execution.MojoExecutionListener;
+import org.apache.maven.execution.scope.MojoExecutionScoped;
 import org.apache.maven.execution.scope.internal.MojoExecutionScope;
 import org.apache.maven.plugin.Mojo;
 import org.apache.maven.plugin.MojoExecution;
 import org.apache.maven.project.MavenProject;
 
+import com.google.inject.AbstractModule;
 import com.google.inject.Module;
 
 class Maven321Runtime extends Maven311Runtime {
 
-  public Maven321Runtime(Module[] modules) throws Exception {
+  private static class MojoExecutionScopeModule extends AbstractModule {
+    @Override
+    protected void configure() {
+      MojoExecutionScope scope = new MojoExecutionScope();
+      bind(MojoExecutionScope.class).toInstance(scope);
+
+      bindScope(MojoExecutionScoped.class, scope);
+
+      // standard scope bindings
+      bind(MavenProject.class).toProvider(MojoExecutionScope.<MavenProject>seededKeyProvider()).in(scope);
+      bind(MojoExecution.class).toProvider(MojoExecutionScope.<MojoExecution>seededKeyProvider()).in(scope);
+    }
+  }
+
+  public static Maven321Runtime create(Module[] modules) throws Exception {
+    Module[] joined = new Module[modules.length + 1];
+    joined[0] = new MojoExecutionScopeModule();
+    System.arraycopy(modules, 0, joined, 1, modules.length);
+    return new Maven321Runtime(joined);
+  }
+
+  protected Maven321Runtime(Module[] modules) throws Exception {
     super(modules);
   }
 

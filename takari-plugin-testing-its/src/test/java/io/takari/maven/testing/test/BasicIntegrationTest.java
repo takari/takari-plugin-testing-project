@@ -1,8 +1,5 @@
 package io.takari.maven.testing.test;
 
-import io.takari.maven.testing.TestResources;
-import io.takari.maven.testing.executor.MavenRuntime;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -11,11 +8,15 @@ import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.junit.Assume;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
+
+import io.takari.maven.testing.TestResources;
+import io.takari.maven.testing.executor.MavenRuntime;
 
 /**
  * <ul>
@@ -60,7 +61,7 @@ public class BasicIntegrationTest {
   }
 
   @Test
-  public void test() throws Exception {
+  public void testBasic() throws Exception {
     File basedir = resources.getBasedir("basic");
     write(new File(basedir, "src/test/java/basic/TargetVersion.java"),
         "package basic; class TargetVersion { static final String VERSION = \"" + version + "\"; }");
@@ -74,5 +75,17 @@ public class BasicIntegrationTest {
     try (Writer w = new OutputStreamWriter(new FileOutputStream(file), "UTF-8")) {
       w.write(string);
     }
+  }
+
+  @Test
+  public void testGuiceScopes() throws Exception {
+    // scopes were introduced in 3.2.1 https://issues.apache.org/jira/browse/MNG-5530
+    Assume.assumeFalse(version.startsWith("3.0") || version.startsWith("3.1"));
+
+    File basedir = resources.getBasedir("guicescopes");
+    maven.forProject(basedir) //
+        .withCliOptions("-B", "-e", "-DmavenVersion=" + version) //
+        .execute("package") //
+        .assertErrorFreeLog();
   }
 }
