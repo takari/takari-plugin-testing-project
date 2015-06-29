@@ -28,7 +28,7 @@ import io.takari.maven.testing.executor.MavenRuntime;
  * </ul>
  */
 @RunWith(Parameterized.class)
-public class BasicIntegrationTest {
+public class IntegrationTest {
 
   @Parameters(name = "{0}")
   public static List<Object[]> versions() {
@@ -54,7 +54,7 @@ public class BasicIntegrationTest {
 
   private final String version;
 
-  public BasicIntegrationTest(String version) throws Exception {
+  public IntegrationTest(String version) throws Exception {
     this.version = version;
     File mavenHome = new File("target/apache-maven-3.2.5");
     this.maven = MavenRuntime.builder(mavenHome, null).forkedBuilder().build();
