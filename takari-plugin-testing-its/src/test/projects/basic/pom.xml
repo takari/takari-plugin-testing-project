@@ -18,10 +18,10 @@
   <packaging>takari-maven-plugin</packaging>
 
   <properties>
-    <takariLifecycleVersion>1.10.1</takariLifecycleVersion>
+    <takariLifecycleVersion>1.11.7</takariLifecycleVersion>
     <mavenVersion>3.2.5</mavenVersion>
     <mavenPluginPluginVersion>3.3</mavenPluginPluginVersion>
-    <it-project.version>2.2.0-SNAPSHOT</it-project.version>
+    <it-project.version>2.6.0-SNAPSHOT</it-project.version>
   </properties>
 
   <dependencies>
@@ -79,6 +79,9 @@
         <artifactId>takari-lifecycle-plugin</artifactId>
         <version>${takariLifecycleVersion}</version>
         <extensions>true</extensions>
+        <configuration>
+          <proc>none</proc>
+        </configuration>
       </plugin>
 
       <plugin>
@@ -96,17 +99,31 @@
         </executions>
       </plugin>
     </plugins>
-
     <pluginManagement>
       <plugins>
+        <!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself.-->
         <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-plugin-plugin</artifactId>
-          <version>${mavenPluginPluginVersion}</version>
+          <groupId>org.eclipse.m2e</groupId>
+          <artifactId>lifecycle-mapping</artifactId>
+          <version>1.0.0</version>
           <configuration>
-            <packagingTypes>
-              <packaging>takari-maven-plugin</packaging>
-            </packagingTypes>
+            <lifecycleMappingMetadata>
+              <pluginExecutions>
+                <pluginExecution>
+                  <pluginExecutionFilter>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-dependency-plugin</artifactId>
+                    <versionRange>[2.10,)</versionRange>
+                    <goals>
+                      <goal>properties</goal>
+                    </goals>
+                  </pluginExecutionFilter>
+                  <action>
+                    <execute/>
+                  </action>
+                </pluginExecution>
+              </pluginExecutions>
+            </lifecycleMappingMetadata>
           </configuration>
         </plugin>
       </plugins>
