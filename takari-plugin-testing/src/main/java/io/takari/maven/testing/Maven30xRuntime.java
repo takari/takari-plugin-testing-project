@@ -223,13 +223,13 @@ class Maven30xRuntime implements MavenRuntime {
     MojoDescriptor mojoDescriptor = mojoDescriptors.get(goal);
     assertNotNull(String.format("The MojoDescriptor for the goal %s cannot be null.", goal), mojoDescriptor);
     MojoExecution execution = new MojoExecution(mojoDescriptor);
-    finalizeMojoConfiguration(execution);
+    execution.setConfiguration(new Xpp3Dom("configuration"));
     return execution;
   }
 
   // copy&paste from
   // org.apache.maven.lifecycle.internal.DefaultLifecycleExecutionPlanCalculator.finalizeMojoConfiguration(MojoExecution)
-  private void finalizeMojoConfiguration(MojoExecution mojoExecution) {
+  protected void finalizeMojoConfiguration(MojoExecution mojoExecution) {
     MojoDescriptor mojoDescriptor = mojoExecution.getMojoDescriptor();
 
     Xpp3Dom executionConfiguration = mojoExecution.getConfiguration();
@@ -237,7 +237,7 @@ class Maven30xRuntime implements MavenRuntime {
       executionConfiguration = new Xpp3Dom("configuration");
     }
 
-    Xpp3Dom defaultConfiguration = MojoDescriptorCreator.convert(mojoDescriptor);;
+    Xpp3Dom defaultConfiguration = MojoDescriptorCreator.convert(mojoDescriptor);
 
     Xpp3Dom finalConfiguration = new Xpp3Dom("configuration");
 
@@ -314,8 +314,10 @@ class Maven30xRuntime implements MavenRuntime {
       configuration = new Xpp3Dom("configuration");
     }
     configuration = Xpp3Dom.mergeXpp3Dom(configuration, execution.getConfiguration());
+    execution.setConfiguration(configuration);
+    finalizeMojoConfiguration(execution);
 
-    PlexusConfiguration pluginConfiguration = new XmlPlexusConfiguration(configuration);
+    PlexusConfiguration pluginConfiguration = new XmlPlexusConfiguration(execution.getConfiguration());
 
     String configuratorHint = "basic";
     if (mojoDescriptor.getComponentConfigurator() != null) {

@@ -29,6 +29,7 @@ class Maven331Runtime extends Maven325Runtime {
 
     ExpressionEvaluator evaluator = new PluginParameterExpressionEvaluator(session, execution);
     mojoExecutionConfigurator(execution).configure(project, execution, true);
+    finalizeMojoConfiguration(execution);
     PlexusConfiguration mojoConfiguration = new XmlPlexusConfiguration(execution.getConfiguration());
 
     String configuratorHint = "basic";

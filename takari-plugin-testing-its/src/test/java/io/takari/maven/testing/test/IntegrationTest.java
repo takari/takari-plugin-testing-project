@@ -88,4 +88,14 @@ public class IntegrationTest {
         .execute("package") //
         .assertErrorFreeLog();
   }
+
+  @Test
+  public void testPomConfig() throws Exception {
+    File basedir = resources.getBasedir("pomconfig");
+    maven.forProject(basedir) //
+        .withCliOptions("-B", "-e", "-DmavenVersion=" + version) //
+        .execute("package") //
+        .assertErrorFreeLog();
+  }
+
 }
