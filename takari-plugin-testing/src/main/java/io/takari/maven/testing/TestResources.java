@@ -122,6 +122,11 @@ public class TestResources extends TestWatcher {
     Assert.assertEquals(expected, actual);
   }
 
+  public static void assertFileContents(String expectedContents, File basedir, String path) throws IOException {
+    String actualContents = FileUtils.fileRead(new File(basedir, path));
+    Assert.assertEquals(expectedContents, actualContents);
+  }
+
   public static void assertDirectoryContents(File dir, String... expectedPaths) {
     DirectoryScanner scanner = new DirectoryScanner();
     scanner.setBasedir(dir);
@@ -204,6 +209,26 @@ public class TestResources extends TestWatcher {
         expected.append(path).append("\n");
         if (!new File(basedir, path).isFile()) {
           actual.append("MISSING ");
+        }
+        actual.append(path).append("\n");
+      }
+      Assert.assertEquals(expected.toString(), actual.toString());
+    }
+  }
+
+  public static void assertFilesNotPresent(File basedir, String... paths) {
+    if (basedir == null || paths == null || paths.length <= 0) {
+      throw new IllegalArgumentException();
+    }
+    if (paths.length == 1) {
+      Assert.assertFalse(paths[0] + " NOT PRESENT", new File(basedir, paths[0]).isFile());
+    } else {
+      StringBuilder expected = new StringBuilder();
+      StringBuilder actual = new StringBuilder();
+      for (String path : paths) {
+        expected.append(path).append("\n");
+        if (new File(basedir, path).isFile()) {
+          actual.append("PRESET ");
         }
         actual.append(path).append("\n");
       }
