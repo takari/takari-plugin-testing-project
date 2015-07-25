@@ -36,6 +36,7 @@ class Maven311Runtime extends Maven30xRuntime {
     return container.lookup(ProjectBuilder.class).build(getPomFile(pom), configuration).getProject();
   }
 
+  @SuppressWarnings("deprecation")
   @Override
   public MavenSession newMavenSession() throws MavenExecutionRequestPopulationException, ComponentLookupException {
     MavenExecutionRequest request = new DefaultMavenExecutionRequest();
