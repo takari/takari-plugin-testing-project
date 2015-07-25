@@ -18,7 +18,7 @@ class Maven325Runtime extends Maven321Runtime {
   }
 
   @Override
-  public void executeMojo(MavenSession session, MavenProject project, MojoExecution execution) throws Exception {
+  public Mojo executeMojo(MavenSession session, MavenProject project, MojoExecution execution) throws Exception {
     SessionScope sessionScope = container.lookup(SessionScope.class);
     try {
       sessionScope.enter();
@@ -38,6 +38,8 @@ class Maven325Runtime extends Maven321Runtime {
         for (MojoExecutionListener listener : container.lookupList(MojoExecutionListener.class)) {
           listener.afterMojoExecutionSuccess(event);
         }
+
+        return mojo;
       } finally {
         executionScope.exit();
       }

@@ -19,7 +19,7 @@ interface MavenRuntime {
 
   MojoExecution newMojoExecution(String goal);
 
-  void executeMojo(MavenSession session, MavenProject project, MojoExecution execution) throws Exception;
+  Mojo executeMojo(MavenSession session, MavenProject project, MojoExecution execution) throws Exception;
 
   Mojo lookupConfiguredMojo(MavenSession session, MojoExecution execution) throws Exception;
 

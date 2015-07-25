@@ -292,8 +292,10 @@ class Maven30xRuntime implements MavenRuntime {
   }
 
   @Override
-  public void executeMojo(MavenSession session, MavenProject project, MojoExecution execution) throws Exception {
-    lookupConfiguredMojo(session, execution).execute();
+  public Mojo executeMojo(MavenSession session, MavenProject project, MojoExecution execution) throws Exception {
+    Mojo mojo = lookupConfiguredMojo(session, execution);
+    mojo.execute();
+    return mojo;
   }
 
   @Override
