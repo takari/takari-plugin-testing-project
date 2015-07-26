@@ -7,6 +7,8 @@
  */
 package io.takari.maven.testing;
 
+import java.io.BufferedReader;
+
 // some of the code was originally copied from org.apache.maven.plugin.testing.resources.TestResources
 
 /*
@@ -32,6 +34,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -117,13 +120,31 @@ public class TestResources extends TestWatcher {
   }
 
   public static void assertFileContents(File basedir, String expectedPath, String actualPath) throws IOException {
-    String expected = FileUtils.fileRead(new File(basedir, expectedPath));
-    String actual = FileUtils.fileRead(new File(basedir, actualPath));
+    String expected = fileRead(new File(basedir, expectedPath), true);
+    String actual = fileRead(new File(basedir, actualPath), true);
     Assert.assertEquals(expected, actual);
   }
 
+  private static String fileRead(File file, boolean normalizeEOL) throws IOException {
+    StringBuilder sb = new StringBuilder();
+    try (BufferedReader r = new BufferedReader(new InputStreamReader(new FileInputStream(file)))) {
+      if (normalizeEOL) {
+        String str;
+        while ((str = r.readLine()) != null) {
+          sb.append(str).append('\n');
+        }
+      } else {
+        int ch;
+        while ((ch = r.read()) != -1) {
+          sb.append((char) ch);
+        }
+      }
+    }
+    return sb.toString();
+  }
+
   public static void assertFileContents(String expectedContents, File basedir, String path) throws IOException {
-    String actualContents = FileUtils.fileRead(new File(basedir, path));
+    String actualContents = fileRead(new File(basedir, path), true);
     Assert.assertEquals(expectedContents, actualContents);
   }
 
