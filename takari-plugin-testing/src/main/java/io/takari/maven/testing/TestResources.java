@@ -271,11 +271,4 @@ public class TestResources extends TestWatcher {
     }
     return Collections.unmodifiableMap(result);
   }
-
-  /**
-   * @since 2.7
-   */
-  public static File symlink(File symlink, File target) throws IOException {
-    return java.nio.file.Files.createSymbolicLink(symlink.toPath(), target.toPath()).toFile();
-  }
 }
