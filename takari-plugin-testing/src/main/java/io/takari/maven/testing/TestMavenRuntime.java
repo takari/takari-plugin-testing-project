@@ -117,6 +117,7 @@ public class TestMavenRuntime implements TestRule {
     private String classifier;
     private String version = "1.0";
     private String type = "jar";
+    private String scope = Artifact.SCOPE_COMPILE;
     private boolean optional;
 
     private TestDependency(File artifact) {
@@ -154,13 +155,19 @@ public class TestMavenRuntime implements TestRule {
       return this;
     }
 
+    public TestDependency setScope(String scope) {
+      this.scope = scope;
+
+      return this;
+    }
+
     public TestDependency addTo(MavenProject project) throws Exception {
       return addTo(project, true);
     }
 
     public TestDependency addTo(MavenProject project, boolean direct) throws Exception {
       ArtifactHandler handler = getContainer().lookup(ArtifactHandler.class, type);
-      DefaultArtifact artifact = new DefaultArtifact(groupId, artifactId, version, Artifact.SCOPE_COMPILE, type, classifier, handler);
+      DefaultArtifact artifact = new DefaultArtifact(groupId, artifactId, version, scope, type, classifier, handler);
       artifact.setFile(file);
       artifact.setOptional(optional);
       Set<Artifact> artifacts = project.getArtifacts();
