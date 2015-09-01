@@ -25,7 +25,7 @@ pom.xml
     <dependency>
       <groupId>io.takari.maven.plugins</groupId>
       <artifactId>takari-plugin-testing</artifactId>
-      <version>2.0.0</version>
+      <version>2.7.0</version>
       <scope>test</scope>
     </dependency>
     
@@ -69,13 +69,13 @@ pom.xml
     <dependency>
       <groupId>io.takari.maven.plugins</groupId>
       <artifactId>takari-plugin-testing</artifactId>
-      <version>2.0.0</version>
+      <version>2.7.0</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>io.takari.maven.plugins</groupId>
       <artifactId>takari-plugin-integration-testing</artifactId>
-      <version>2.0.0</version>
+      <version>2.7.0</version>
       <type>pom</type>
       <scope>test</scope>
     </dependency>
