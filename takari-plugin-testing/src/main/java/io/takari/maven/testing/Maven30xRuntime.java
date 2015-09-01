@@ -270,17 +270,9 @@ class Maven30xRuntime implements MavenRuntime {
 
   @Override
   public MavenSession newMavenSession() throws Exception {
-    MavenExecutionRequest request = new DefaultMavenExecutionRequest();
+    MavenExecutionRequest request = newExecutionRequest();
     MavenExecutionResult result = new DefaultMavenExecutionResult();
-
-    request.setLocalRepositoryPath(properties.getLocalRepository());
-    request.setUserSettingsFile(properties.getUserSettings());
-    request.setOffline(properties.getOffline());
-    request.setUpdateSnapshots(properties.getUpdateSnapshots());
-
-    request = container.lookup(MavenExecutionRequestPopulator.class).populateDefaults(request);
     DefaultMaven maven = (DefaultMaven) container.lookup(Maven.class);
-
     try {
       Object repositorySession = maven.getClass().getMethod("newRepositorySession", MavenExecutionRequest.class).invoke(maven, request);
       Class<?> repositorySessionClass = repositorySession.getClass().getClassLoader().loadClass("org.sonatype.aether.RepositorySystemSession");
@@ -289,6 +281,17 @@ class Maven30xRuntime implements MavenRuntime {
     } catch (ReflectiveOperationException | SecurityException e) {
       throw new RuntimeException(e);
     }
+  }
+
+  protected MavenExecutionRequest newExecutionRequest() throws Exception {
+    MavenExecutionRequest request = new DefaultMavenExecutionRequest();
+
+    request.setLocalRepositoryPath(properties.getLocalRepository());
+    request.setUserSettingsFile(properties.getUserSettings());
+    request.setOffline(properties.getOffline());
+    request.setUpdateSnapshots(properties.getUpdateSnapshots());
+
+    return container.lookup(MavenExecutionRequestPopulator.class).populateDefaults(request);
   }
 
   @Override

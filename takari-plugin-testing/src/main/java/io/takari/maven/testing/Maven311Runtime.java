@@ -7,14 +7,11 @@ import org.apache.maven.Maven;
 import org.apache.maven.execution.DefaultMavenExecutionRequest;
 import org.apache.maven.execution.DefaultMavenExecutionResult;
 import org.apache.maven.execution.MavenExecutionRequest;
-import org.apache.maven.execution.MavenExecutionRequestPopulationException;
-import org.apache.maven.execution.MavenExecutionRequestPopulator;
 import org.apache.maven.execution.MavenExecutionResult;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.ProjectBuilder;
 import org.apache.maven.project.ProjectBuildingRequest;
-import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
 import org.eclipse.aether.DefaultRepositorySystemSession;
 import org.eclipse.aether.RepositorySystemSession;
 
@@ -38,18 +35,11 @@ class Maven311Runtime extends Maven30xRuntime {
 
   @SuppressWarnings("deprecation")
   @Override
-  public MavenSession newMavenSession() throws MavenExecutionRequestPopulationException, ComponentLookupException {
-    MavenExecutionRequest request = new DefaultMavenExecutionRequest();
-    MavenExecutionResult result = new DefaultMavenExecutionResult();
-
-    request.setLocalRepositoryPath(properties.getLocalRepository());
-    request.setUserSettingsFile(properties.getUserSettings());
-    request.setOffline(properties.getOffline());
-    request.setUpdateSnapshots(properties.getUpdateSnapshots());
-
-    request = container.lookup(MavenExecutionRequestPopulator.class).populateDefaults(request);
+  public MavenSession newMavenSession() throws Exception {
+    MavenExecutionRequest request = newExecutionRequest();
     RepositorySystemSession repositorySession = ((DefaultMaven) container.lookup(Maven.class)).newRepositorySession(request);
 
+    MavenExecutionResult result = new DefaultMavenExecutionResult();
     return new MavenSession(container, repositorySession, request, result);
   }
 
