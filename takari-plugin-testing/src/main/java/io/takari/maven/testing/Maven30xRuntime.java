@@ -46,6 +46,7 @@ import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Properties;
 
 import org.apache.maven.DefaultMaven;
 import org.apache.maven.Maven;
@@ -291,7 +292,27 @@ class Maven30xRuntime implements MavenRuntime {
     request.setOffline(properties.getOffline());
     request.setUpdateSnapshots(properties.getUpdateSnapshots());
 
+    Properties buildProperties = getMavenBuildProperties();
+    String mavenVersion = buildProperties.getProperty("version");
+
+    Properties systemProperties = new Properties();
+    systemProperties.putAll(System.getProperties()); // TODO not thread safe
+    systemProperties.setProperty("maven.version", mavenVersion);
+    systemProperties.setProperty("maven.build.version", mavenVersion);
+
+    request.setSystemProperties(systemProperties);
+
     return container.lookup(MavenExecutionRequestPopulator.class).populateDefaults(request);
+  }
+
+  private Properties getMavenBuildProperties() {
+    Properties properties = new Properties();
+    try (InputStream is = getClass().getResourceAsStream("/META-INF/maven/org.apache.maven/maven-core/pom.properties")) {
+      properties.load(is);
+    } catch (IOException e) {
+      // ignore
+    }
+    return properties;
   }
 
   @Override
