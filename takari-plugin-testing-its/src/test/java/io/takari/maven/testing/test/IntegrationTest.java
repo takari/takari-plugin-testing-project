@@ -98,4 +98,12 @@ public class IntegrationTest {
         .assertErrorFreeLog();
   }
 
+  @Test
+  public void testUnitTestHarnessHonoursUserSettings() throws Exception {
+    File basedir = resources.getBasedir("settings");
+    maven.forProject(basedir) //
+        .withCliOptions("-B", "-e", "-DmavenVersion=" + version) //
+        .execute("test") //
+        .assertErrorFreeLog();
+  }
 }

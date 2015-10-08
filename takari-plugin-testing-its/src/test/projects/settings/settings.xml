@@ -1,0 +1,16 @@
+<settings>
+  <profiles>
+    <profile>
+      <id>test</id>
+      <repositories>
+        <repository>
+          <id>central</id>
+          <url>https://test/test/</url>
+        </repository>
+      </repositories>
+    </profile>
+  </profiles>
+  <activeProfiles>
+    <activeProfile>test</activeProfile>
+  </activeProfiles>
+</settings>

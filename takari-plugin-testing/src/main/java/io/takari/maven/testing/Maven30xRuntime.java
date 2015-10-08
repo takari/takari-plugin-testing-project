@@ -70,6 +70,10 @@ import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.ProjectBuilder;
 import org.apache.maven.project.ProjectBuildingRequest;
 import org.apache.maven.repository.RepositorySystem;
+import org.apache.maven.settings.Settings;
+import org.apache.maven.settings.building.DefaultSettingsBuildingRequest;
+import org.apache.maven.settings.building.SettingsBuilder;
+import org.apache.maven.settings.building.SettingsBuildingRequest;
 import org.codehaus.plexus.ContainerConfiguration;
 import org.codehaus.plexus.DefaultContainerConfiguration;
 import org.codehaus.plexus.DefaultPlexusContainer;
@@ -198,10 +202,15 @@ class Maven30xRuntime implements MavenRuntime {
   @Override
   public MavenProject readMavenProject(File basedir) throws Exception {
     File pom = new File(basedir, "pom.xml");
-    MavenExecutionRequest request = new DefaultMavenExecutionRequest();
+    MavenExecutionRequest request = newExecutionRequest();
     request.setBaseDirectory(basedir);
-    ProjectBuildingRequest configuration = request.getProjectBuildingRequest();
+    ProjectBuildingRequest configuration = getProjectBuildingRequest(request);
     return container.lookup(ProjectBuilder.class).build(getPomFile(pom), configuration).getProject();
+  }
+
+  protected ProjectBuildingRequest getProjectBuildingRequest(MavenExecutionRequest request) throws ComponentLookupException {
+    // TODO populate repository system session... if somebody asks for it really nicely
+    return request.getProjectBuildingRequest();
   }
 
   protected File getPomFile(File pom) throws IOException {
@@ -284,25 +293,37 @@ class Maven30xRuntime implements MavenRuntime {
     }
   }
 
+  @SuppressWarnings("deprecation")
   protected MavenExecutionRequest newExecutionRequest() throws Exception {
-    MavenExecutionRequest request = new DefaultMavenExecutionRequest();
 
-    request.setLocalRepositoryPath(properties.getLocalRepository());
-    request.setUserSettingsFile(properties.getUserSettings());
-    request.setOffline(properties.getOffline());
-    request.setUpdateSnapshots(properties.getUpdateSnapshots());
-
+    // system properties
     Properties buildProperties = getMavenBuildProperties();
     String mavenVersion = buildProperties.getProperty("version");
-
     Properties systemProperties = new Properties();
     systemProperties.putAll(System.getProperties()); // TODO not thread safe
     systemProperties.setProperty("maven.version", mavenVersion);
     systemProperties.setProperty("maven.build.version", mavenVersion);
 
+    // request with initial configuration
+    MavenExecutionRequest request = new DefaultMavenExecutionRequest();
+    request.setLocalRepositoryPath(properties.getLocalRepository());
+    request.setUserSettingsFile(properties.getUserSettings());
+    request.setGlobalSettingsFile(properties.getGlobalSettings());
+    request.setOffline(properties.getOffline());
+    request.setUpdateSnapshots(properties.getUpdateSnapshots());
     request.setSystemProperties(systemProperties);
 
-    return container.lookup(MavenExecutionRequestPopulator.class).populateDefaults(request);
+    // read settings
+    SettingsBuildingRequest settingsRequest = new DefaultSettingsBuildingRequest();
+    settingsRequest.setGlobalSettingsFile(request.getGlobalSettingsFile());
+    settingsRequest.setUserSettingsFile(request.getUserSettingsFile());
+    settingsRequest.setSystemProperties(request.getSystemProperties());
+    settingsRequest.setUserProperties(request.getUserProperties());
+    Settings settings = lookup(SettingsBuilder.class).build(settingsRequest).getEffectiveSettings();
+
+    MavenExecutionRequestPopulator populator = container.lookup(MavenExecutionRequestPopulator.class);
+    request = populator.populateFromSettings(request, settings);
+    return populator.populateDefaults(request);
   }
 
   private Properties getMavenBuildProperties() {

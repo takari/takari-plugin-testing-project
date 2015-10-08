@@ -7,8 +7,6 @@
  */
 package io.takari.maven.testing;
 
-import io.takari.maven.testing.executor.MavenRuntime.MavenRuntimeBuilder;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -23,12 +21,19 @@ import java.util.TreeMap;
 
 import org.junit.Assert;
 
+import io.takari.maven.testing.executor.MavenRuntime.MavenRuntimeBuilder;
+
 
 public class TestProperties {
 
   public static final String PROP_CLASSPATH = "classpath";
 
+  /** @deprecated use {@link #PROP_USER_SETTING_FILE} */
   public static final String PROP_USER_SETTING = "userSettings";
+
+  public static final String PROP_USER_SETTING_FILE = "userSettingsFile";
+
+  public static final String PROP_GLOBAL_SETTING_FILE = "globalSettingsFile";
 
   public static final String PROP_LOCAL_REPOSITORY = "localRepository";
 
@@ -67,12 +72,26 @@ public class TestProperties {
 
   public File getUserSettings() {
     // can be null
-    String path = properties.get(PROP_USER_SETTING);
+    String path = properties.get(PROP_USER_SETTING_FILE);
+    if (path == null) {
+      path = properties.get(PROP_USER_SETTING);
+    }
     if (path == null) {
       return null;
     }
     File file = new File(path);
     Assert.assertTrue("Can read user settings.xml", file.canRead());
+    return file;
+  }
+
+  public File getGlobalSettings() {
+    // can be null
+    String path = properties.get(PROP_GLOBAL_SETTING_FILE);
+    if (path == null) {
+      return null;
+    }
+    File file = new File(path);
+    Assert.assertTrue("Can read global settings.xml", file.canRead());
     return file;
   }
 
