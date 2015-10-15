@@ -229,7 +229,7 @@ public class TestResources extends TestWatcher {
       for (String path : paths) {
         expected.append(path).append("\n");
         if (!new File(basedir, path).isFile()) {
-          actual.append("MISSING ");
+          actual.append("NOT PRESENT ");
         }
         actual.append(path).append("\n");
       }
@@ -249,7 +249,7 @@ public class TestResources extends TestWatcher {
       for (String path : paths) {
         expected.append(path).append("\n");
         if (new File(basedir, path).isFile()) {
-          actual.append("PRESET ");
+          actual.append("PRESENT ");
         }
         actual.append(path).append("\n");
       }
