@@ -211,7 +211,8 @@ public class TestResources extends TestWatcher {
     }
     for (String path : paths) {
       File file = new File(basedir, path);
-      Assert.assertTrue(file.getParentFile().mkdirs());
+      file.getParentFile().mkdirs();
+      Assert.assertTrue(file.getParentFile().isDirectory());
       file.createNewFile();
       Assert.assertTrue(file.isFile() && file.canRead());
     }
