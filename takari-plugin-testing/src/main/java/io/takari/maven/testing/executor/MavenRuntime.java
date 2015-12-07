@@ -82,15 +82,23 @@ public class MavenRuntime {
     }
 
     public MavenRuntimeBuilder withExtension(File extensionLocation) {
+      assertFileExists("No such file or directory: " + extensionLocation, extensionLocation);
       extensions.add(extensionLocation.getAbsolutePath());
       return this;
     }
 
     public MavenRuntimeBuilder withExtensions(Collection<File> extensionLocations) {
       for (File extensionLocation : extensionLocations) {
+        assertFileExists("No such file or directory: " + extensionLocation, extensionLocation);
         extensions.add(extensionLocation.getAbsolutePath());
       }
       return this;
+    }
+
+    private void assertFileExists(String message, File file) {
+      if (!file.exists()) {
+        throw new AssertionError("No such file or directory: " + file);
+      }
     }
 
     public MavenRuntimeBuilder withCliOptions(String... options) {
