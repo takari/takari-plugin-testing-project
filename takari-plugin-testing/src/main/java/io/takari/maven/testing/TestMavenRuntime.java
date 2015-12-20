@@ -161,6 +161,12 @@ public class TestMavenRuntime implements TestRule {
       return this;
     }
 
+    public TestDependency setVersion(String version) {
+      this.version = version;
+
+      return this;
+    }
+
     public TestDependency addTo(MavenProject project) throws Exception {
       return addTo(project, true);
     }
