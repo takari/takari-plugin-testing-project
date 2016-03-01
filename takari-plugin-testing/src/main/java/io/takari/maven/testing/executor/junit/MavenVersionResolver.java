@@ -7,8 +7,6 @@
  */
 package io.takari.maven.testing.executor.junit;
 
-import io.takari.maven.testing.TestProperties;
-
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -20,30 +18,73 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.StringReader;
+import java.net.Authenticator;
 import java.net.HttpURLConnection;
+import java.net.PasswordAuthentication;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.nio.file.attribute.PosixFilePermission;
-import java.util.Collection;
-import java.util.LinkedHashSet;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
 import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream;
 import org.junit.runners.model.InitializationError;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+
+import io.takari.maven.testing.TestProperties;
 
 abstract class MavenVersionResolver {
   private static final XPathFactory xpathFactory = XPathFactory.newInstance();
+  private static final DocumentBuilderFactory documentBuilderFactory;
+
+  static {
+    DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+    // settings.xml may have default xmlns, which may confuse xpath if not suppressed
+    factory.setNamespaceAware(false);
+    documentBuilderFactory = factory;
+  }
+
+  private static class Credentials {
+    public final String username;
+    public final String password;
+
+    public Credentials(String username, String password) {
+      this.username = username;
+      this.password = password;
+    }
+  }
+
+  private static class Repository {
+    public final URL url;
+    public final Credentials credentials;
+
+    public Repository(URL url, Credentials credentials) {
+      this.url = url;
+      this.credentials = credentials;
+    }
+  }
 
   public void resolve(String[] versions) throws Exception {
-    Collection<URL> repositories = null;
+    List<Repository> repositories = null;
     TestProperties properties = new TestProperties();
     for (String version : versions) {
       // refuse to test with SNAPSHOT maven version when build RELEASE plugins
@@ -57,16 +98,25 @@ abstract class MavenVersionResolver {
         if (repositories == null) {
           repositories = getRepositories(properties);
         }
+        Authenticator defaultAuthenticator = getDefaultAuthenticator();
         try {
           createMavenInstallation(repositories, version, properties.getLocalRepository(), basdir);
         } catch (Exception e) {
           error(version, e);
+        } finally {
+          Authenticator.setDefault(defaultAuthenticator);
         }
       }
       if (mavenHome.isDirectory()) {
         resolved(mavenHome, version);
       }
     }
+  }
+
+  private static Authenticator getDefaultAuthenticator() {
+    // there is no API to query current default Authenticator
+    // assume that integration test jvm does not have any at this point
+    return null;
   }
 
   private boolean isSnapshot(String version) {
@@ -100,23 +150,66 @@ abstract class MavenVersionResolver {
     }
   }
 
-  private Collection<URL> getRepositories(TestProperties properties) throws Exception {
-    LinkedHashSet<URL> repositories = new LinkedHashSet<>();
+  private List<Repository> getRepositories(TestProperties properties) throws Exception {
+    Map<String, Credentials> credentials = getCredentials(properties);
+    List<Repository> repositories = new ArrayList<>();
     for (String property : properties.getRepositories()) {
       InputSource is = new InputSource(new StringReader("<repository>" + property + "</repository>"));
-      String url = getXPath(is, "/repository/url");
+      Element repository = (Element) xpathFactory.newXPath() //
+          .compile("/repository") //
+          .evaluate(is, XPathConstants.NODE);
+      String url = getChildValue(repository, "url");
       if (url == null) {
         continue; // malformed test.properties
       }
       if (!url.endsWith("/")) {
         url = url + "/";
       }
-      repositories.add(new URL(url));
+      String id = getChildValue(repository, "id");
+      repositories.add(new Repository(new URL(url), credentials.get(id)));
     }
     return repositories;
   }
 
-  private String getXPath(InputSource is, String path) throws Exception {
+  private Map<String, Credentials> getCredentials(TestProperties properties) throws IOException {
+    File userSettings = properties.getUserSettings();
+    if (userSettings == null) {
+      return Collections.emptyMap();
+    }
+    Map<String, Credentials> result = new HashMap<>();
+    try {
+      Document document = documentBuilderFactory.newDocumentBuilder().parse(userSettings);
+      NodeList servers = (NodeList) xpathFactory.newXPath() //
+          .compile("//settings/servers/server") //
+          .evaluate(document, XPathConstants.NODESET);
+      for (int i = 0; i < servers.getLength(); i++) {
+        Element server = (Element) servers.item(i);
+        String id = getChildValue(server, "id");
+        String username = getChildValue(server, "username");
+        String password = getChildValue(server, "password");
+        if (id != null && username != null) {
+          result.put(id, new Credentials(username, password));
+        }
+      }
+    } catch (XPathExpressionException | SAXException | ParserConfigurationException e) {
+      // can't happen
+    }
+    return result;
+  }
+
+  private String getChildValue(Element server, String name) {
+    NodeList children = server.getElementsByTagName(name);
+    if (children.getLength() != 1) {
+      return null;
+    }
+    String value = ((Element) children.item(0)).getTextContent();
+    if (value != null) {
+      value = value.trim();
+    }
+    return !value.isEmpty() ? value : null;
+  }
+
+  private String getXPathString(InputSource is, String path) throws Exception {
     String value = xpathFactory.newXPath().compile(path).evaluate(is);
     if (value == null) {
       return null;
@@ -125,7 +218,7 @@ abstract class MavenVersionResolver {
     return !value.isEmpty() ? value : null;
   }
 
-  private void createMavenInstallation(Collection<URL> repositories, String version, File localrepo, File targetdir) throws Exception {
+  private void createMavenInstallation(List<Repository> repositories, String version, File localrepo, File targetdir) throws Exception {
     String versionDir = "org/apache/maven/apache-maven/" + version + "/";
     String filename = "apache-maven-" + version + "-bin.tar.gz";
     File archive = new File(localrepo, versionDir + filename);
@@ -134,11 +227,12 @@ abstract class MavenVersionResolver {
       return;
     }
     Exception cause = null;
-    for (URL repository : repositories) {
+    for (Repository repository : repositories) {
+      setHttpCredentials(repository.credentials);
       String effectiveVersion;
       if (isSnapshot(version)) {
         try {
-          effectiveVersion = getQualifiedVersion(repository, versionDir);
+          effectiveVersion = getQualifiedVersion(repository.url, versionDir);
         } catch (FileNotFoundException e) {
           continue;
         } catch (IOException e) {
@@ -157,7 +251,7 @@ abstract class MavenVersionResolver {
         unarchive(archive, targetdir);
         return;
       }
-      URL resource = new URL(repository, versionDir + filename);
+      URL resource = new URL(repository.url, versionDir + filename);
       try (InputStream is = openStream(resource)) {
         archive.getParentFile().mkdirs();
         File tmpfile = File.createTempFile(filename, ".tmp", archive.getParentFile());
@@ -180,13 +274,26 @@ abstract class MavenVersionResolver {
     throw exception;
   }
 
+  private void setHttpCredentials(final Credentials credentials) {
+    Authenticator authenticator = null;
+    if (credentials != null) {
+      authenticator = new Authenticator() {
+        @Override
+        protected PasswordAuthentication getPasswordAuthentication() {
+          return new PasswordAuthentication(credentials.username, credentials.password.toCharArray());
+        }
+      };
+    }
+    Authenticator.setDefault(authenticator);
+  }
+
   private String getQualifiedVersion(URL repository, String versionDir) throws Exception {
     URL resource = new URL(repository, versionDir + "maven-metadata.xml");
     try (InputStream is = openStream(resource)) {
       ByteArrayOutputStream buf = new ByteArrayOutputStream();
       copy(is, buf);
       InputSource xml = new InputSource(new ByteArrayInputStream(buf.toByteArray()));
-      String version = getXPath(xml, "//metadata/versioning/snapshotVersions/snapshotVersion[extension='tar.gz']/value");
+      String version = getXPathString(xml, "//metadata/versioning/snapshotVersions/snapshotVersion[extension='tar.gz']/value");
       if (version == null) {
         return null;
       }
