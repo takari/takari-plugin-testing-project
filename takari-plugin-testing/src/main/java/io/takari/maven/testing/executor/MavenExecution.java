@@ -19,14 +19,17 @@ public class MavenExecution {
 
   private final TestProperties properties;
 
+  private final File multiModuleProjectDirectory;
+
   private final File basedir;
 
   private final List<String> cliOptions = new ArrayList<>();
 
-  MavenExecution(MavenLauncher launcher, TestProperties properties, File basedir) {
+  MavenExecution(MavenLauncher launcher, TestProperties properties, File multiModuleProjectDirectory, String moduleRelpath) {
     this.launcher = launcher;
     this.properties = properties;
-    this.basedir = basedir;
+    this.multiModuleProjectDirectory = multiModuleProjectDirectory;
+    this.basedir = moduleRelpath != null ? new File(multiModuleProjectDirectory, moduleRelpath) : multiModuleProjectDirectory;
   }
 
   public MavenExecutionResult execute(String... goals) throws Exception {
@@ -50,7 +53,7 @@ public class MavenExecution {
       args.add(goal);
     }
 
-    launcher.run(args.toArray(new String[args.size()]), basedir, logFile);
+    launcher.run(args.toArray(new String[args.size()]), multiModuleProjectDirectory, basedir, logFile);
 
     return new MavenExecutionResult(basedir, logFile);
   }

@@ -173,8 +173,30 @@ public class MavenRuntime {
     return new ForkedMavenRuntimeBuilder(mavenHome, null);
   }
 
-  public MavenExecution forProject(File basedir) {
-    return new MavenExecution(launcher, properties, basedir);
+  public MavenExecution forProject(File multiModuleProjectDirectory) {
+    return new MavenExecution(launcher, properties, multiModuleProjectDirectory, null);
+  }
+
+  /**
+   * @since 2.9
+   */
+  public MavenExecution forProject(File multiModuleProjectDirectory, String moduleRelpath) throws IOException, LauncherException {
+    String mavenVersion = launcher.getMavenVersion();
+    if (!isVersion330plus(mavenVersion)) {
+      throw new UnsupportedOperationException("Explicit multiModuleProjectDirectory requires Maven 3.3 or newer, current version is " + mavenVersion);
+    }
+    return new MavenExecution(launcher, properties, multiModuleProjectDirectory, moduleRelpath);
+  }
+
+  private boolean isVersion330plus(String version) {
+    String[] split = version.split("\\.");
+    if (split.length < 2) {
+      return false; // can't parse
+    }
+    if (Integer.parseInt(split[0]) < 3) {
+      return false;
+    }
+    return Integer.parseInt(split[1]) >= 3;
   }
 
   /**

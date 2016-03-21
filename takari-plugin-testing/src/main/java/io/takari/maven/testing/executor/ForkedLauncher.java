@@ -89,7 +89,7 @@ class ForkedLauncher implements MavenLauncher {
     this.classworldsJar = classworldsJar;
   }
 
-  public int run(String[] cliArgs, Map<String, String> envVars, File workingDirectory, File logFile) throws IOException, LauncherException {
+  public int run(String[] cliArgs, Map<String, String> envVars, File multiModuleProjectDirectory, File workingDirectory, File logFile) throws IOException, LauncherException {
     String javaHome;
     if (envVars == null || envVars.get("JAVA_HOME") == null) {
       javaHome = System.getProperty("java.home");
@@ -103,7 +103,7 @@ class ForkedLauncher implements MavenLauncher {
     cli.addArgument("-classpath").addArgument(classworldsJar.getAbsolutePath());
     cli.addArgument("-Dclassworlds.conf=" + new File(mavenHome, "bin/m2.conf").getAbsolutePath());
     cli.addArgument("-Dmaven.home=" + mavenHome.getAbsolutePath());
-    cli.addArgument("-Dmaven.multiModuleProjectDirectory=" + workingDirectory.getAbsolutePath());
+    cli.addArgument("-Dmaven.multiModuleProjectDirectory=" + multiModuleProjectDirectory.getAbsolutePath());
     cli.addArgument("org.codehaus.plexus.classworlds.launcher.Launcher");
 
     cli.addArguments(args.toArray(new String[args.size()]));
@@ -157,8 +157,8 @@ class ForkedLauncher implements MavenLauncher {
   }
 
   @Override
-  public int run(String[] cliArgs, File workingDirectory, File logFile) throws IOException, LauncherException {
-    return run(cliArgs, envVars, workingDirectory, logFile);
+  public int run(String[] cliArgs, File multiModuleProjectDirectory, File workingDirectory, File logFile) throws IOException, LauncherException {
+    return run(cliArgs, envVars, multiModuleProjectDirectory, workingDirectory, logFile);
   }
 
   @Override
@@ -174,7 +174,7 @@ class ForkedLauncher implements MavenLauncher {
 
     // disable EMMA runtime controller port allocation, should be harmless if EMMA is not used
     Map<String, String> envVars = Collections.singletonMap("MAVEN_OPTS", "-Demma.rt.control=false");
-    run(new String[] {"--version"}, envVars, new File(""), logFile);
+    run(new String[] {"--version"}, envVars, new File(""), new File(""), logFile);
 
     List<String> logLines = Files.readAllLines(logFile.toPath(), Charset.defaultCharset());
     // noinspection ResultOfMethodCallIgnored
