@@ -230,8 +230,17 @@ public class TestMavenRuntime implements TestRule {
     return session;
   }
 
-  public MojoExecution newMojoExecution(String goal) {
-    return runtime.newMojoExecution(goal);
+  /** @since 2.9 */
+  public MojoExecution newMojoExecution(String goal, Xpp3Dom... parameters) {
+    MojoExecution execution = runtime.newMojoExecution(goal);
+    if (parameters != null) {
+      // TODO decide if this should go to runtime.newMojoExecution
+      Xpp3Dom configuration = execution.getConfiguration();
+      for (Xpp3Dom parameter : parameters) {
+        configuration.addChild(parameter);
+      }
+    }
+    return execution;
   }
 
   public void executeMojo(File basedir, String goal, Xpp3Dom... parameters) throws Exception {
@@ -241,13 +250,7 @@ public class TestMavenRuntime implements TestRule {
   }
 
   public void executeMojo(MavenSession session, MavenProject project, String goal, Xpp3Dom... parameters) throws Exception {
-    MojoExecution execution = newMojoExecution(goal);
-    if (parameters != null) {
-      Xpp3Dom configuration = execution.getConfiguration();
-      for (Xpp3Dom parameter : parameters) {
-        configuration.addChild(parameter);
-      }
-    }
+    MojoExecution execution = newMojoExecution(goal, parameters);
     executeMojo(session, project, execution);
   }
 
