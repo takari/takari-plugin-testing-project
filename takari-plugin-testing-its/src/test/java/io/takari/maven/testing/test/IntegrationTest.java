@@ -44,6 +44,7 @@ public class IntegrationTest {
     parameters.add(new Object[] {"3.3.1"});
     // parameters.add(new Object[] {"3.3.2"}); was never released
     parameters.add(new Object[] {"3.3.3"});
+    parameters.add(new Object[] {"3.3.9"});
     return parameters;
   }
 
