@@ -137,6 +137,12 @@ public class TestMavenRuntime implements TestRule {
       return this;
     }
 
+    public TestDependency setVersion(String version) {
+      this.version = version;
+
+      return this;
+    }
+
     public TestDependency setType(String type) {
       this.type = type;
 
