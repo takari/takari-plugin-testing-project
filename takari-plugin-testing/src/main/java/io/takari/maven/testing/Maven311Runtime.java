@@ -40,8 +40,9 @@ class Maven311Runtime extends Maven30xRuntime {
 
   @SuppressWarnings("deprecation")
   @Override
-  public MavenSession newMavenSession() throws Exception {
+  public MavenSession newMavenSession(File basedir) throws Exception {
     MavenExecutionRequest request = newExecutionRequest();
+    request.setMultiModuleProjectDirectory(basedir);
     RepositorySystemSession repositorySession = newRepositorySession(request);
 
     MavenExecutionResult result = new DefaultMavenExecutionResult();

@@ -15,7 +15,7 @@ interface MavenRuntime {
 
   MavenProject readMavenProject(File basedir) throws Exception;
 
-  MavenSession newMavenSession() throws Exception;
+  MavenSession newMavenSession(File baseir) throws Exception;
 
   MojoExecution newMojoExecution(String goal);
 

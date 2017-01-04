@@ -230,7 +230,7 @@ public class TestMavenRuntime implements TestRule {
   }
 
   public MavenSession newMavenSession(MavenProject project) throws Exception {
-    MavenSession session = runtime.newMavenSession();
+    MavenSession session = runtime.newMavenSession(project.getBasedir());
     session.setCurrentProject(project);
     session.setProjects(Arrays.asList(project));
     return session;

@@ -279,7 +279,7 @@ class Maven30xRuntime implements MavenRuntime {
   }
 
   @Override
-  public MavenSession newMavenSession() throws Exception {
+  public MavenSession newMavenSession(File basedir) throws Exception {
     MavenExecutionRequest request = newExecutionRequest();
     MavenExecutionResult result = new DefaultMavenExecutionResult();
     DefaultMaven maven = (DefaultMaven) container.lookup(Maven.class);
