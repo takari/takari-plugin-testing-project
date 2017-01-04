@@ -42,7 +42,6 @@ class Maven311Runtime extends Maven30xRuntime {
   @Override
   public MavenSession newMavenSession(File basedir) throws Exception {
     MavenExecutionRequest request = newExecutionRequest();
-    request.setMultiModuleProjectDirectory(basedir);
     RepositorySystemSession repositorySession = newRepositorySession(request);
 
     MavenExecutionResult result = new DefaultMavenExecutionResult();

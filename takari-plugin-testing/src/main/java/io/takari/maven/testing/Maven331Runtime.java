@@ -1,5 +1,10 @@
 package io.takari.maven.testing;
 
+import java.io.File;
+
+import org.apache.maven.execution.DefaultMavenExecutionResult;
+import org.apache.maven.execution.MavenExecutionRequest;
+import org.apache.maven.execution.MavenExecutionResult;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.lifecycle.MojoExecutionConfigurator;
 import org.apache.maven.plugin.Mojo;
@@ -11,6 +16,7 @@ import org.codehaus.plexus.component.configurator.ComponentConfigurator;
 import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluator;
 import org.codehaus.plexus.configuration.PlexusConfiguration;
 import org.codehaus.plexus.configuration.xml.XmlPlexusConfiguration;
+import org.eclipse.aether.RepositorySystemSession;
 
 import com.google.inject.Module;
 
@@ -52,4 +58,14 @@ class Maven331Runtime extends Maven325Runtime {
     return container.lookup(MojoExecutionConfigurator.class, configuratorId);
   }
 
+  @SuppressWarnings("deprecation")
+  @Override
+  public MavenSession newMavenSession(File basedir) throws Exception {
+    MavenExecutionRequest request = newExecutionRequest();
+    request.setMultiModuleProjectDirectory(basedir);
+    RepositorySystemSession repositorySession = newRepositorySession(request);
+
+    MavenExecutionResult result = new DefaultMavenExecutionResult();
+    return new MavenSession(container, repositorySession, request, result);
+  }
 }
