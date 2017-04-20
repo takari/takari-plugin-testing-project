@@ -22,4 +22,11 @@ public class GuiceScopesTest {
     // blows up if @MojoExecutionScoped component can't be injected
     maven.executeMojo(basedir, "guicescopes");
   }
+
+  @Test
+  public void test_jsr330() throws Exception {
+    File basedir = resources.getBasedir();
+    // blows up if @MojoExecutionScoped component can't be injected
+    maven.executeMojo(basedir, "guicescopes-jsr330");
+  }
 }
