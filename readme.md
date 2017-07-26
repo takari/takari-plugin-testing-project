@@ -80,7 +80,6 @@ pom.xml
       <scope>test</scope>
     </dependency>
 
-
 test
 
     @RunWith(MavenJUnitTestRunner.class)
@@ -106,6 +105,19 @@ test
           .assertLogText("some build message");
       }
     }
+
+Note that test pom.xml can use `${it-project.version}` to reference the version of the takari-maven-plugin or takari-maven-component project being build (i.e. the project which defines the test). For example,
+
+    <build>
+      <plugins>
+        <plugin>
+          <groupId>example.groupId</groupId>
+          <artifactId>example-plugin</artifactId>
+          <version>${it-project.version}</version>
+          <executions>...</executions>
+        </plugin>
+    ...
+
 
 ### Hudson users beware
  
