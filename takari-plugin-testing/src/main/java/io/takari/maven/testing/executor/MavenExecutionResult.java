@@ -68,4 +68,10 @@ public class MavenExecutionResult {
     return basedir;
   }
 
+  /**
+   * @since 2.9.2
+   */
+  public List<String> getLog() {
+    return log;
+  }
 }
