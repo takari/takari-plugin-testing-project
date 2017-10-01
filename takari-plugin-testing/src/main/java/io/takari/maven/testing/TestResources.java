@@ -156,18 +156,18 @@ public class TestResources extends TestWatcher {
 
     Set<String> actual = new TreeSet<String>();
     for (String path : scanner.getIncludedFiles()) {
-      actual.add(path);
+      actual.add(path.replace(File.separatorChar, '/'));
     }
     for (String path : scanner.getIncludedDirectories()) {
       if (path.length() > 0) {
-        actual.add(path + "/");
+        actual.add(path.replace(File.separatorChar, '/') + "/");
       }
     }
 
     Set<String> expected = new TreeSet<String>();
     if (expectedPaths != null) {
       for (String path : expectedPaths) {
-        expected.add(path);
+        expected.add(path.replace(File.separatorChar, '/'));
       }
     }
 
