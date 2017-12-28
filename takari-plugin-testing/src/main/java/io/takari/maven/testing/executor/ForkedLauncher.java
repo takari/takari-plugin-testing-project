@@ -59,8 +59,11 @@ class ForkedLauncher implements MavenLauncher {
 
   private final List<String> args;
 
-  public ForkedLauncher(File mavenHome, File classworldsConf, List<String> extensions, Map<String, String> envVars, List<String> args) {
+  private final List<String> jvmArgs;
+
+  public ForkedLauncher(File mavenHome, File classworldsConf, List<String> extensions, Map<String, String> envVars, List<String> args, List<String> jvmArgs) {
     this.args = args;
+    this.jvmArgs = jvmArgs;
     if (mavenHome == null) {
       throw new NullPointerException();
     }
@@ -104,6 +107,9 @@ class ForkedLauncher implements MavenLauncher {
     cli.addArgument("-Dclassworlds.conf=" + new File(mavenHome, "bin/m2.conf").getAbsolutePath());
     cli.addArgument("-Dmaven.home=" + mavenHome.getAbsolutePath());
     cli.addArgument("-Dmaven.multiModuleProjectDirectory=" + multiModuleProjectDirectory.getAbsolutePath());
+
+    cli.addArguments(jvmArgs.toArray(new String[jvmArgs.size()]));
+
     cli.addArgument("org.codehaus.plexus.classworlds.launcher.Launcher");
 
     cli.addArguments(args.toArray(new String[args.size()]));
