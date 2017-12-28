@@ -121,6 +121,7 @@ public class MavenRuntime {
   public static class ForkedMavenRuntimeBuilder extends MavenRuntimeBuilder {
 
     private Map<String, String> environment;
+    private final List<String> jvmArgs = new ArrayList<>();
 
     ForkedMavenRuntimeBuilder(File mavenHome, File classworldsConf) {
       super(mavenHome, classworldsConf);
@@ -153,9 +154,47 @@ public class MavenRuntime {
       return this;
     }
 
+    /**
+     * Adds a JVM option, as opposed to application option that can be added via {@link #withCliOptions(String...)}. Use this method to add options you would normally pass to {@code mvn/mvn.bat} via
+     * {@code MAVEN_OPTS} environment variable.
+     *
+     * @param jvmOption the JVM option to add
+     * @return this {@link ForkedMavenRuntimeBuilder}
+     */
+    public ForkedMavenRuntimeBuilder withJvmOption(String jvmOption) {
+      this.jvmArgs.add(jvmOption);
+      return this;
+    }
+
+    /**
+     * Add a JVM options, as opposed to application options that can be added via {@link #withCliOptions(String...)}. Use this method to add options you would normally pass to {@code mvn/mvn.bat} via
+     * {@code MAVEN_OPTS} environment variable.
+     *
+     * @param jvmOptions the JVM options to add
+     * @return this {@link ForkedMavenRuntimeBuilder}
+     */
+    public ForkedMavenRuntimeBuilder withJvmOptions(String... jvmOptions) {
+      for (String jvmArg : jvmOptions) {
+        this.jvmArgs.add(jvmArg);
+      }
+      return this;
+    }
+
+    /**
+     * Add a JVM options, as opposed to application options that can be added via {@link #withCliOptions(String...)}. Use this method to add options you would normally pass to {@code mvn/mvn.bat} via
+     * {@code MAVEN_OPTS} environment variable.
+     *
+     * @param jvmOptions the JVM options to add
+     * @return this {@link ForkedMavenRuntimeBuilder}
+     */
+    public ForkedMavenRuntimeBuilder withJvmOptions(Collection<String> jvmOptions) {
+      this.jvmArgs.addAll(jvmOptions);
+      return this;
+    }
+
     @Override
     public MavenRuntime build() {
-      ForkedLauncher launcher = new ForkedLauncher(mavenHome, classworldsConf, extensions, environment, args);
+      ForkedLauncher launcher = new ForkedLauncher(mavenHome, classworldsConf, extensions, environment, args, jvmArgs);
       return new MavenRuntime(launcher, properties);
     }
   }
