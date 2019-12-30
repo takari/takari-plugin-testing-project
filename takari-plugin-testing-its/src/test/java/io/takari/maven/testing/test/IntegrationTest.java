@@ -20,7 +20,7 @@ import io.takari.maven.testing.executor.MavenRuntime;
 
 /**
  * <ul>
- * <li>The test project is built with maven 3.2.5.</li>
+ * <li>The test project is built with maven 3.6.3.</li>
  * <li>The test project is built against specific versions of maven, as specified in individual test
  * methods</li>
  * <li>The test project is not able to resolve test harness from the reactor, hence the outer build
@@ -33,19 +33,7 @@ public class IntegrationTest {
   @Parameters(name = "{0}")
   public static List<Object[]> versions() {
     List<Object[]> parameters = new ArrayList<>();
-    // parameters.add(new Object[] {"3.0.5"}); not supported unless someone asks real nice
-    // parameters.add(new Object[] {"3.1.0"}); not supported unless someone asks real nice
-    // parameters.add(new Object[] {"3.1.1"}); not supported unless someone asks real nice
-    // parameters.add(new Object[] {"3.2.1"}); see https://issues.apache.org/jira/browse/MNG-5591
-    // parameters.add(new Object[] {"3.2.2"}); not supported unless someone asks real nice
-    parameters.add(new Object[] {"3.2.3"});
-    // parameters.add(new Object[] {"3.2.4"}); was never released
-    parameters.add(new Object[] {"3.2.5"});
-    parameters.add(new Object[] {"3.3.1"});
-    // parameters.add(new Object[] {"3.3.2"}); was never released
-    parameters.add(new Object[] {"3.3.3"});
-    parameters.add(new Object[] {"3.3.9"});
-    parameters.add(new Object[] {"3.5.0"});
+    parameters.add(new Object[] {"3.6.3"});
     return parameters;
   }
 
@@ -58,7 +46,7 @@ public class IntegrationTest {
 
   public IntegrationTest(String version) throws Exception {
     this.version = version;
-    File mavenHome = new File("target/apache-maven-3.2.5");
+    File mavenHome = new File("target/apache-maven-3.6.3");
     this.maven = MavenRuntime.builder(mavenHome, null).forkedBuilder().build();
   }
 
