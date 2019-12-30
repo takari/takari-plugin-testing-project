@@ -24,11 +24,13 @@
   <packaging>pom</packaging>
 
   <properties>
-    <mavenVersion>3.3.1</mavenVersion>
-    <sisuVersion>0.3.0</sisuVersion>
-    <sisuGuiceVersion>3.2.5</sisuGuiceVersion>
-    <aetherVersion>1.0.2.v20150114</aetherVersion>
-    <slf4jVersion>1.7.9</slf4jVersion>
+    <mavenVersion>3.6.3</mavenVersion>
+    <sisuVersion>0.3.4</sisuVersion>
+    <sisuGuiceVersion>4.2.0</sisuGuiceVersion>
+    <aetherVersion>1.4.1</aetherVersion>
+    <plexusVersion>3.3.0</plexusVersion>
+    <slf4jVersion>1.7.30</slf4jVersion>
+    <takariLifecycleVersion>1.13.9</takariLifecycleVersion>
   </properties>
 
   <modules>
@@ -47,7 +49,7 @@
       <dependency>
         <groupId>org.codehaus.plexus</groupId>
         <artifactId>plexus-utils</artifactId>
-        <version>3.0.21</version>
+        <version>${plexusVersion}</version>
       </dependency>
 
       <!-- unit testing -->
@@ -68,7 +70,7 @@
       </dependency>
       <dependency>
         <groupId>org.apache.maven</groupId>
-        <artifactId>maven-aether-provider</artifactId>
+        <artifactId>maven-resolver-provider</artifactId>
         <version>${mavenVersion}</version>
       </dependency>
       <dependency>
@@ -92,8 +94,8 @@
         <version>${mavenVersion}</version>
       </dependency>
       <dependency>
-        <groupId>org.eclipse.aether</groupId>
-        <artifactId>aether-api</artifactId>
+        <groupId>org.apache.maven.resolver</groupId>
+        <artifactId>maven-resolver-api</artifactId>
         <version>${aetherVersion}</version>
       </dependency>
       <dependency>
@@ -112,12 +114,12 @@
       <dependency>
         <groupId>org.apache.commons</groupId>
         <artifactId>commons-exec</artifactId>
-        <version>1.2</version>
+        <version>1.3</version>
       </dependency>
       <dependency>
         <groupId>org.codehaus.plexus</groupId>
         <artifactId>plexus-classworlds</artifactId>
-        <version>2.5.2</version>
+        <version>2.6.0</version>
       </dependency>
       <dependency>
         <groupId>io.takari.m2e.workspace</groupId>
@@ -129,7 +131,7 @@
       <dependency>
         <groupId>org.apache.commons</groupId>
         <artifactId>commons-compress</artifactId>
-        <version>1.9</version>
+        <version>1.19</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
