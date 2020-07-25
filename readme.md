@@ -14,7 +14,8 @@ Features and benefits
 * Run plugins integration tests against multiple Maven versions
 * Integration with takari-lifecycle and incrementalbuild library
 * Fully supported by Maven Development Tools m2e extension
-* [2.1.0+] full support for all maven versions starting with 3.0
+* [2.1.0+] full support for all maven versions 3.0 to 3.6.2
+* [3.0.0+] full support for all maven versions 3.6.3+, requires Java11+
 
 ### Unit testing
 
