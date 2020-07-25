@@ -8,6 +8,7 @@
 package io.takari.maven.testing.executor;
 
 import java.io.File;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -53,7 +54,16 @@ public class MavenExecution {
       args.add(goal);
     }
 
-    launcher.run(args.toArray(new String[args.size()]), multiModuleProjectDirectory, basedir, logFile);
+    try {
+      launcher.run(args.toArray(new String[args.size()]), multiModuleProjectDirectory, basedir, logFile);
+    } catch(Exception e) {
+      String ciEnvar = System.getenv("CONTINUOUS_INTEGRATION");
+      if(ciEnvar != null && ciEnvar.equalsIgnoreCase("true")) {
+        String logFileContent = new String(Files.readAllBytes(logFile.toPath()));
+        System.out.println(logFileContent);
+      }
+      throw e;
+    }
 
     return new MavenExecutionResult(basedir, logFile);
   }
