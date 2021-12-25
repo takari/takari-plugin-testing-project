@@ -56,6 +56,7 @@ public abstract class AbstractTestMavenRuntime {
     MAVEN_VERSION = version;
   }
 
+  @FunctionalInterface
   private static interface RuntimeFactory {
     MavenRuntime newInstance(Module[] modules) throws Exception;
   }
@@ -66,37 +67,12 @@ public abstract class AbstractTestMavenRuntime {
   static {
     Map<VersionRange, RuntimeFactory> factories = new LinkedHashMap<>();
     try {
-      factories.put(VersionRange.createFromVersionSpec("[3.0,3.1.1)"), new RuntimeFactory() {
-        @Override
-        public MavenRuntime newInstance(Module[] modules) throws Exception {
-          return new Maven30xRuntime(modules);
-        }
-      });
-      factories.put(VersionRange.createFromVersionSpec("[3.1.1,3.2.1)"), new RuntimeFactory() {
-        @Override
-        public MavenRuntime newInstance(Module[] modules) throws Exception {
-          return new Maven311Runtime(modules);
-        }
-      });
-      factories.put(VersionRange.createFromVersionSpec("[3.2.1,3.2.5)"), new RuntimeFactory() {
-        @Override
-        public MavenRuntime newInstance(Module[] modules) throws Exception {
-          return Maven321Runtime.create(modules);
-        }
-      });
-      factories.put(VersionRange.createFromVersionSpec("[3.2.5]"), new RuntimeFactory() {
-        @Override
-        public MavenRuntime newInstance(Module[] modules) throws Exception {
-          return new Maven325Runtime(modules);
-        }
-      });
+      factories.put(VersionRange.createFromVersionSpec("[3.0,3.1.1)"), Maven30xRuntime::new);
+      factories.put(VersionRange.createFromVersionSpec("[3.1.1,3.2.1)"), Maven311Runtime::new);
+      factories.put(VersionRange.createFromVersionSpec("[3.2.1,3.2.5)"), Maven321Runtime::create);
+      factories.put(VersionRange.createFromVersionSpec("[3.2.5]"), Maven325Runtime::new);
       // the last entry is expected to handle everything else
-      factories.put(VersionRange.createFromVersionSpec("(3.2.5,]"), new RuntimeFactory() {
-        @Override
-        public MavenRuntime newInstance(Module[] modules) throws Exception {
-          return new Maven331Runtime(modules);
-        }
-      });
+      factories.put(VersionRange.createFromVersionSpec("(3.2.5,]"), Maven331Runtime::new);
     } catch (InvalidVersionSpecificationException e) {
       throw new RuntimeException(e);
     }
