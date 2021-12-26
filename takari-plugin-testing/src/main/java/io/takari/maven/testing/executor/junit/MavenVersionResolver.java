@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.StringReader;
+import java.lang.reflect.Method;
 import java.net.Authenticator;
 import java.net.HttpURLConnection;
 import java.net.PasswordAuthentication;
@@ -113,10 +114,16 @@ abstract class MavenVersionResolver {
     }
   }
 
-  private static Authenticator getDefaultAuthenticator() {
-    // there is no API to query current default Authenticator
-    // assume that integration test jvm does not have any at this point
-    return null;
+  private static Authenticator getDefaultAuthenticator() throws ReflectiveOperationException {
+    Method getDefault;
+    try {
+      getDefault = Authenticator.class.getMethod("getDefault");
+    } catch (NoSuchMethodException e) {
+      // there is no API to query current default Authenticator before JDK 9
+      // assume that integration test jvm does not have any at this point
+      return null;
+    }
+    return (Authenticator) getDefault.invoke(null);
   }
 
   private boolean isSnapshot(String version) {
