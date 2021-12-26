@@ -15,7 +15,7 @@
   <parent>
     <groupId>io.takari</groupId>
     <artifactId>takari</artifactId>
-    <version>28</version>
+    <version>47</version>
   </parent>
 
   <groupId>io.takari.maven.plugins</groupId>
@@ -30,7 +30,6 @@
     <aetherVersion>1.4.1</aetherVersion>
     <plexusVersion>3.3.0</plexusVersion>
     <slf4jVersion>1.7.30</slf4jVersion>
-    <takariLifecycleVersion>1.13.9</takariLifecycleVersion>
   </properties>
 
   <modules>
