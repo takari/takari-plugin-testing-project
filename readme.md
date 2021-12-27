@@ -7,6 +7,7 @@ maven-plugin-testing-harness and maven-verifier.
 Features and benefits
 
 * Convenient junit4-based API
+* Convenient junit5-based API
 * Flexible unit test mojo configuration API simplifies test project setup 
   and maintenance
 * Collocate main and test code in the same build module
@@ -44,7 +45,7 @@ pom.xml
       <scope>test</scope>
     </dependency>
 
-test code
+JUnit 4 test code
 
     public class PluginUnitTest {
       @Rule
@@ -55,6 +56,23 @@ test code
     
       @Test
       public void test() throws Exception {
+        File basedir = resources.getBasedir("testproject");
+        maven.executeMojo(basedir, "mymojo", newParameter("name", "value");
+        assertFilesPresent(basedir, "target/output.txt");
+      }
+    }
+
+JUnit 5 test code
+
+    class PluginUnitTest {
+      @RegisterExtension
+      final TestResources5 resources = new TestResources5();
+    
+      @RegisterExtension
+      final TestMavenRuntime5 maven = new TestMavenRuntime5();
+    
+      @Test
+      void test() throws Exception {
         File basedir = resources.getBasedir("testproject");
         maven.executeMojo(basedir, "mymojo", newParameter("name", "value");
         assertFilesPresent(basedir, "target/output.txt");
@@ -81,7 +99,7 @@ pom.xml
       <scope>test</scope>
     </dependency>
 
-test
+JUnit 4 test
 
     @RunWith(MavenJUnitTestRunner.class)
     @MavenVersions({"3.2.3", "3.2.5"})
@@ -97,6 +115,31 @@ test
     
       @Test
       public void test() throws Exception {
+        File basedir = resources.getBasedir("basic");
+        maven.forProject(basedir)
+          .withCliOption("-Dproperty=value")
+          .withCliOption("-X")
+          .execute("deploy")
+          .assertErrorFreeLog()
+          .assertLogText("some build message");
+      }
+    }
+
+JUnit 5 test
+
+    @MavenVersions({"3.2.3", "3.2.5"})
+    class PluginIntegrationTest {
+      @RegisterExtension
+      final TestResources5 resources = new TestResources5();
+    
+      private final MavenRuntime maven;
+    
+      PluginIntegrationTest(MavenRuntimeBuilder mavenBuilder) {
+        this.maven = mavenBuilder.withCliOptions("-B", "-U").build();
+      }
+    
+      @MavenPluginTest
+      void test() throws Exception {
         File basedir = resources.getBasedir("basic");
         maven.forProject(basedir)
           .withCliOption("-Dproperty=value")
