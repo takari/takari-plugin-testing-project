@@ -56,7 +56,7 @@ public class TestProperties {
   protected Map<String, String> loadProperties() throws IOException {
     Properties p = new Properties();
     try (InputStream os = getClass().getClassLoader().getResourceAsStream("test.properties")) {
-      Assert.assertNotNull("test.properties must be preset on test classpath, see https://github.com/takari/takari-plugin-testing-project/blob/master/testproperties.md for me details", os);
+      Assert.assertNotNull("test.properties must be present on test classpath, see https://github.com/takari/takari-plugin-testing-project/blob/master/testproperties.md for me details", os);
       p.load(os);
     }
     Map<String, String> properties = new HashMap<>();
