@@ -131,6 +131,15 @@ class Maven30xRuntime implements MavenRuntime {
 
       PluginDescriptor pluginDescriptor = new PluginDescriptorBuilder().build(interpolationFilterReader);
 
+      // Due this commit to prevent NPE https://github.com/apache/maven/commit/05b748ff6aa15aa63a9c9d5f9f5679f47bf9e83d
+      // The pluginDescriptor.plugin is set ONLY when it already went through DefaultMavenPluginManager, nothing
+      // else sets this.
+      Plugin plugin = new Plugin();
+      plugin.setGroupId( pluginDescriptor.getGroupId() );
+      plugin.setArtifactId( pluginDescriptor.getArtifactId() );
+      plugin.setVersion( pluginDescriptor.getVersion() );
+      pluginDescriptor.setPlugin( plugin );
+
       Artifact artifact = container.lookup(RepositorySystem.class) //
           .createArtifact(pluginDescriptor.getGroupId(), pluginDescriptor.getArtifactId(), pluginDescriptor.getVersion(), ".jar");
 
