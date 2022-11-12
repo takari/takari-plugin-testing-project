@@ -15,7 +15,7 @@
   <parent>
     <groupId>io.takari</groupId>
     <artifactId>takari</artifactId>
-    <version>47</version>
+    <version>50</version>
   </parent>
 
   <groupId>io.takari.maven.plugins</groupId>
@@ -25,11 +25,10 @@
 
   <properties>
     <mavenVersion>3.6.3</mavenVersion>
-    <sisuVersion>0.3.4</sisuVersion>
+    <sisuVersion>0.3.5</sisuVersion>
     <sisuGuiceVersion>4.2.0</sisuGuiceVersion>
-    <aetherVersion>1.4.1</aetherVersion>
-    <plexusVersion>3.3.0</plexusVersion>
-    <slf4jVersion>1.7.30</slf4jVersion>
+    <aetherVersion>1.6.3</aetherVersion>
+    <slf4jVersion>1.7.36</slf4jVersion>
   </properties>
 
   <modules>
@@ -48,14 +47,14 @@
       <dependency>
         <groupId>org.junit</groupId>
         <artifactId>junit-bom</artifactId>
-        <version>5.8.2</version>
+        <version>5.9.1</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
       <dependency>
         <groupId>org.codehaus.plexus</groupId>
         <artifactId>plexus-utils</artifactId>
-        <version>${plexusVersion}</version>
+        <version>3.5.0</version>
       </dependency>
 
       <!-- unit testing -->
@@ -137,7 +136,7 @@
       <dependency>
         <groupId>org.apache.commons</groupId>
         <artifactId>commons-compress</artifactId>
-        <version>1.19</version>
+        <version>1.22</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
