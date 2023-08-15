@@ -33,7 +33,7 @@
 
   <properties>
     <takariLifecycleVersion>1.13.9</takariLifecycleVersion>
-    <mavenVersion>3.6.3</mavenVersion>
+    <mavenVersion>3.8.1</mavenVersion>
     <mavenPluginPluginVersion>3.6.0</mavenPluginPluginVersion>
     <it-project.version>2.0.0-SNAPSHOT</it-project.version>
   </properties>
