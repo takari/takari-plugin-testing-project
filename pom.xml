@@ -24,7 +24,7 @@
   <packaging>pom</packaging>
 
   <properties>
-    <mavenVersion>3.6.3</mavenVersion>
+    <mavenVersion>3.8.1</mavenVersion>
     <sisuVersion>0.3.5</sisuVersion>
     <sisuGuiceVersion>4.2.0</sisuGuiceVersion>
     <aetherVersion>1.6.3</aetherVersion>
