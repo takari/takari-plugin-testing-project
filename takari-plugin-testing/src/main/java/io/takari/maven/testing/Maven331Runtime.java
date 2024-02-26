@@ -1,7 +1,14 @@
+/*
+ * Copyright (c) 2014-2024 Takari, Inc.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * https://www.eclipse.org/legal/epl-v10.html
+ */
 package io.takari.maven.testing;
 
+import com.google.inject.Module;
 import java.io.File;
-
 import org.apache.maven.execution.DefaultMavenExecutionResult;
 import org.apache.maven.execution.MavenExecutionRequest;
 import org.apache.maven.execution.MavenExecutionResult;
@@ -18,54 +25,52 @@ import org.codehaus.plexus.configuration.PlexusConfiguration;
 import org.codehaus.plexus.configuration.xml.XmlPlexusConfiguration;
 import org.eclipse.aether.RepositorySystemSession;
 
-import com.google.inject.Module;
-
 class Maven331Runtime extends Maven325Runtime {
 
-  public Maven331Runtime(Module[] modules) throws Exception {
-    super(modules);
-  }
-
-  @Override
-  public Mojo lookupConfiguredMojo(MavenSession session, MojoExecution execution) throws Exception {
-    MavenProject project = session.getCurrentProject();
-    MojoDescriptor mojoDescriptor = execution.getMojoDescriptor();
-
-    Mojo mojo = container.lookup(Mojo.class, mojoDescriptor.getRoleHint());
-
-    ExpressionEvaluator evaluator = new PluginParameterExpressionEvaluator(session, execution);
-    mojoExecutionConfigurator(execution).configure(project, execution, true);
-    finalizeMojoConfiguration(execution);
-    PlexusConfiguration mojoConfiguration = new XmlPlexusConfiguration(execution.getConfiguration());
-
-    String configuratorHint = "basic";
-    if (mojoDescriptor.getComponentConfigurator() != null) {
-      configuratorHint = mojoDescriptor.getComponentConfigurator();
+    public Maven331Runtime(Module[] modules) throws Exception {
+        super(modules);
     }
 
-    ComponentConfigurator configurator = container.lookup(ComponentConfigurator.class, configuratorHint);
+    @Override
+    public Mojo lookupConfiguredMojo(MavenSession session, MojoExecution execution) throws Exception {
+        MavenProject project = session.getCurrentProject();
+        MojoDescriptor mojoDescriptor = execution.getMojoDescriptor();
 
-    configurator.configureComponent(mojo, mojoConfiguration, evaluator, container.getContainerRealm());
+        Mojo mojo = container.lookup(Mojo.class, mojoDescriptor.getRoleHint());
 
-    return mojo;
-  }
+        ExpressionEvaluator evaluator = new PluginParameterExpressionEvaluator(session, execution);
+        mojoExecutionConfigurator(execution).configure(project, execution, true);
+        finalizeMojoConfiguration(execution);
+        PlexusConfiguration mojoConfiguration = new XmlPlexusConfiguration(execution.getConfiguration());
 
-  private MojoExecutionConfigurator mojoExecutionConfigurator(MojoExecution mojoExecution) throws Exception {
-    String configuratorId = mojoExecution.getMojoDescriptor().getComponentConfigurator();
-    if (configuratorId == null) {
-      configuratorId = "default";
+        String configuratorHint = "basic";
+        if (mojoDescriptor.getComponentConfigurator() != null) {
+            configuratorHint = mojoDescriptor.getComponentConfigurator();
+        }
+
+        ComponentConfigurator configurator = container.lookup(ComponentConfigurator.class, configuratorHint);
+
+        configurator.configureComponent(mojo, mojoConfiguration, evaluator, container.getContainerRealm());
+
+        return mojo;
     }
-    return container.lookup(MojoExecutionConfigurator.class, configuratorId);
-  }
 
-  @SuppressWarnings("deprecation")
-  @Override
-  public MavenSession newMavenSession(File basedir) throws Exception {
-    MavenExecutionRequest request = newExecutionRequest();
-    request.setMultiModuleProjectDirectory(basedir);
-    RepositorySystemSession repositorySession = newRepositorySession(request);
+    private MojoExecutionConfigurator mojoExecutionConfigurator(MojoExecution mojoExecution) throws Exception {
+        String configuratorId = mojoExecution.getMojoDescriptor().getComponentConfigurator();
+        if (configuratorId == null) {
+            configuratorId = "default";
+        }
+        return container.lookup(MojoExecutionConfigurator.class, configuratorId);
+    }
 
-    MavenExecutionResult result = new DefaultMavenExecutionResult();
-    return new MavenSession(container, repositorySession, request, result);
-  }
+    @SuppressWarnings("deprecation")
+    @Override
+    public MavenSession newMavenSession(File basedir) throws Exception {
+        MavenExecutionRequest request = newExecutionRequest();
+        request.setMultiModuleProjectDirectory(basedir);
+        RepositorySystemSession repositorySession = newRepositorySession(request);
+
+        MavenExecutionResult result = new DefaultMavenExecutionResult();
+        return new MavenSession(container, repositorySession, request, result);
+    }
 }

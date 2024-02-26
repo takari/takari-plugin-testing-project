@@ -1,14 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
 
-    Copyright (c) 2014 Takari, Inc.
+    Copyright (c) 2014-2024 Takari, Inc.
     All rights reserved. This program and the accompanying materials
     are made available under the terms of the Eclipse Public License v1.0
     which accompanies this distribution, and is available at
-    http://www.eclipse.org/legal/epl-v10.html
+    https://www.eclipse.org/legal/epl-v10.html
 
 -->
-
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
@@ -58,53 +57,12 @@
     <dependency>
       <groupId>io.takari.maven.plugins</groupId>
       <artifactId>takari-plugin-integration-testing</artifactId>
-      <type>pom</type>
       <version>${project.version}</version>
+      <type>pom</type>
     </dependency>
   </dependencies>
 
   <build>
-    <plugins>
-      <plugin>
-        <groupId>io.takari.maven.plugins</groupId>
-        <artifactId>takari-lifecycle-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>testProperties</id>
-            <phase>process-test-resources</phase>
-            <goals>
-              <goal>testProperties</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-dependency-plugin</artifactId>
-        <version>3.3.0</version>
-        <executions>
-          <execution>
-            <id>unpack</id>
-            <phase>generate-test-resources</phase>
-            <goals>
-              <goal>unpack</goal>
-            </goals>
-            <configuration>
-              <outputDirectory>${project.build.directory}</outputDirectory>
-              <artifactItems>
-                <artifactItem>
-                  <groupId>org.apache.maven</groupId>
-                  <artifactId>apache-maven</artifactId>
-                  <version>3.6.3</version>
-                  <classifier>bin</classifier>
-                  <type>tar.gz</type>
-                </artifactItem>
-              </artifactItems>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-    </plugins>
     <pluginManagement>
       <plugins>
         <!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself.-->
@@ -134,5 +92,46 @@
         </plugin>
       </plugins>
     </pluginManagement>
+    <plugins>
+      <plugin>
+        <groupId>io.takari.maven.plugins</groupId>
+        <artifactId>takari-lifecycle-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>testProperties</id>
+            <goals>
+              <goal>testProperties</goal>
+            </goals>
+            <phase>process-test-resources</phase>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <version>3.3.0</version>
+        <executions>
+          <execution>
+            <id>unpack</id>
+            <goals>
+              <goal>unpack</goal>
+            </goals>
+            <phase>generate-test-resources</phase>
+            <configuration>
+              <outputDirectory>${project.build.directory}</outputDirectory>
+              <artifactItems>
+                <artifactItem>
+                  <groupId>org.apache.maven</groupId>
+                  <artifactId>apache-maven</artifactId>
+                  <version>3.6.3</version>
+                  <classifier>bin</classifier>
+                  <type>tar.gz</type>
+                </artifactItem>
+              </artifactItems>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
   </build>
 </project>
