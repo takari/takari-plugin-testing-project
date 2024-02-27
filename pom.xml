@@ -22,18 +22,18 @@
   <version>3.0.2-SNAPSHOT</version>
   <packaging>pom</packaging>
 
+  <modules>
+    <module>takari-plugin-testing</module>
+    <module>takari-plugin-integration-testing</module>
+    <module>takari-plugin-testing-its</module>
+  </modules>
+
   <scm>
     <connection>scm:git:git@github.com:takari/takari-plugin-testing-project.git</connection>
     <developerConnection>scm:git:git@github.com:takari/takari-plugin-testing-project.git</developerConnection>
     <tag>HEAD</tag>
     <url>https://github.com/takari/takari-plugin-testing-project</url>
   </scm>
-
-  <modules>
-    <module>takari-plugin-testing</module>
-    <module>takari-plugin-integration-testing</module>
-    <module>takari-plugin-testing-its</module>
-  </modules>
 
   <properties>
     <mavenVersion>3.9.6</mavenVersion>
