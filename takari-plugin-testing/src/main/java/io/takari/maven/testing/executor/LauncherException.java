@@ -1,9 +1,9 @@
-/**
- * Copyright (c) 2014 Takari, Inc.
+/*
+ * Copyright (c) 2014-2024 Takari, Inc.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * https://www.eclipse.org/legal/epl-v10.html
  */
 package io.takari.maven.testing.executor;
 
@@ -13,9 +13,9 @@ package io.takari.maven.testing.executor;
  * copyright ownership. The ASF licenses this file to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance with the License. You may obtain a
  * copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software distributed under the License
  * is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the License for the specific language governing permissions and limitations under
@@ -28,12 +28,11 @@ package io.takari.maven.testing.executor;
 @SuppressWarnings("serial")
 class LauncherException extends Exception {
 
-  public LauncherException(String message) {
-    super(message);
-  }
+    public LauncherException(String message) {
+        super(message);
+    }
 
-  public LauncherException(String message, Throwable cause) {
-    super(message, cause);
-  }
-
+    public LauncherException(String message, Throwable cause) {
+        super(message, cause);
+    }
 }
