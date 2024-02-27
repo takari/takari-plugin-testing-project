@@ -6,7 +6,6 @@ import io.takari.maven.testing.TestResources5;
 import io.takari.maven.testing.executor.MavenInstallations;
 import io.takari.maven.testing.executor.MavenRuntime;
 import io.takari.maven.testing.executor.MavenRuntime.MavenRuntimeBuilder;
-import io.takari.maven.testing.executor.MavenVersions;
 import io.takari.maven.testing.executor.junit.MavenPluginTest;
 import java.io.File;
 import java.io.IOException;
@@ -14,8 +13,7 @@ import java.nio.file.Files;
 import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
-@MavenVersions("3.8.4")
-@MavenInstallations("target/apache-maven-3.6.3")
+@MavenInstallations({"target/apache-maven-3.6.3", "target/apache-maven-3.8.8", "target/apache-maven-3.9.6"})
 public class JUnit5IntegrationTests {
 
     @RegisterExtension
