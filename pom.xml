@@ -39,7 +39,7 @@
     <mavenVersion>3.9.6</mavenVersion>
     <sisuVersion>0.9.0.M2</sisuVersion>
     <sisuGuiceVersion>6.0.0</sisuGuiceVersion>
-    <aetherVersion>1.9.18</aetherVersion>
+    <aetherVersion>1.9.19</aetherVersion>
     <slf4jVersion>1.7.36</slf4jVersion>
   </properties>
 
