@@ -29,6 +29,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.nio.file.attribute.PosixFilePermission;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -49,6 +50,8 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
+
+import static java.util.Objects.requireNonNull;
 
 abstract class MavenVersionResolver {
     private static final XPathFactory xpathFactory = XPathFactory.newInstance();
@@ -318,13 +321,26 @@ abstract class MavenVersionResolver {
     }
 
     private InputStream openStream(URL resource) throws IOException {
+      ArrayDeque<URL> resources = new ArrayDeque<>();
+      resources.push(resource);
+      return openStream(resources);
+    }
+
+    private InputStream openStream(ArrayDeque<URL> resources) throws IOException {
+        if (resources.size() > 5) {
+            throw new IOException("Too many redirects: " + resources);
+        }
+        URL resource = requireNonNull(resources.peek(), "empty resources");
         URLConnection connection = resource.openConnection();
         if (connection instanceof HttpURLConnection) {
             // for some reason, nexus version 2.11.1-01 returns partial maven-metadata.xml
             // unless request User-Agent header is set to non-default value
             connection.addRequestProperty("User-Agent", "takari-plugin-testing");
             int responseCode = ((HttpURLConnection) connection).getResponseCode();
-            if (responseCode < 200 || responseCode > 299) {
+            if (responseCode == 301 || responseCode == 302 || responseCode == 307) {
+                resources.push(new URL(connection.getHeaderField("Location")));
+                return openStream(resources);
+            } else if (responseCode < 200 || responseCode > 299) {
                 String message = String.format(
                         "HTTP/%d %s", responseCode, ((HttpURLConnection) connection).getResponseMessage());
                 throw responseCode == HttpURLConnection.HTTP_NOT_FOUND
