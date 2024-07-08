@@ -91,15 +91,15 @@ abstract class MavenVersionResolver {
                         "Cannot test %s plugin release with %s maven", properties.getPluginVersion(), version);
                 error(version, new IllegalStateException(msg));
             }
-            File basdir = new File("target/maven-installation").getCanonicalFile();
-            File mavenHome = new File(basdir, "apache-maven-" + version).getCanonicalFile();
+            File basedir = new File("target/maven-installation").getCanonicalFile();
+            File mavenHome = new File(basedir, "apache-maven-" + version).getCanonicalFile();
             if (!mavenHome.isDirectory()) {
                 if (repositories == null) {
                     repositories = getRepositories(properties);
                 }
                 Authenticator defaultAuthenticator = getDefaultAuthenticator();
                 try {
-                    createMavenInstallation(repositories, version, properties.getLocalRepository(), basdir);
+                    createMavenInstallation(repositories, version, properties.getLocalRepository(), basedir);
                 } catch (Exception e) {
                     error(version, e);
                 } finally {

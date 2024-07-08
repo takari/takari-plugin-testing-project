@@ -33,7 +33,7 @@ public class IntegrationTest {
         List<Object[]> parameters = new ArrayList<>();
         parameters.add(new Object[] {"3.6.3"});
         parameters.add(new Object[] {"3.8.8"});
-        parameters.add(new Object[] {"3.9.6"});
+        parameters.add(new Object[] {"3.9.8"});
         return parameters;
     }
 
@@ -46,7 +46,7 @@ public class IntegrationTest {
 
     public IntegrationTest(String version) throws Exception {
         this.version = version;
-        File mavenHome = new File("target/apache-maven-" + version);
+        File mavenHome = new File("target/maven-installation/apache-maven-" + version);
         this.maven = MavenRuntime.builder(mavenHome, null).forkedBuilder().build();
     }
 

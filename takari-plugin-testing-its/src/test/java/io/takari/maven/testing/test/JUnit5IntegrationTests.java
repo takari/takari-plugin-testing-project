@@ -13,7 +13,11 @@ import java.nio.file.Files;
 import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
-@MavenInstallations({"target/apache-maven-3.6.3", "target/apache-maven-3.8.8", "target/apache-maven-3.9.6"})
+@MavenInstallations({
+    "target/maven-installation/apache-maven-3.6.3",
+    "target/maven-installation/apache-maven-3.8.8",
+    "target/maven-installation/apache-maven-3.9.8"
+})
 public class JUnit5IntegrationTests {
 
     @RegisterExtension
@@ -36,7 +40,8 @@ public class JUnit5IntegrationTests {
                 "package basic; class TargetVersion { static final String VERSION = \"" + this.version + "\"; }");
 
         this.maven
-                .forProject(basedir) //
+                .forProject(basedir)
+                .withCliOption("-e") //
                 .execute("package") //
                 .assertErrorFreeLog();
     }

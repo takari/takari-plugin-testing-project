@@ -109,6 +109,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-dependency-plugin</artifactId>
+        <version>3.7.1</version>
         <executions>
           <execution>
             <id>unpack</id>
@@ -117,7 +118,7 @@
             </goals>
             <phase>generate-test-resources</phase>
             <configuration>
-              <outputDirectory>${project.build.directory}</outputDirectory>
+              <outputDirectory>${project.build.directory}/maven-installation</outputDirectory>
               <artifactItems>
                 <artifactItem>
                   <groupId>org.apache.maven</groupId>
@@ -136,7 +137,7 @@
                 <artifactItem>
                   <groupId>org.apache.maven</groupId>
                   <artifactId>apache-maven</artifactId>
-                  <version>3.9.6</version>
+                  <version>3.9.8</version>
                   <classifier>bin</classifier>
                   <type>tar.gz</type>
                 </artifactItem>

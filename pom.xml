@@ -14,7 +14,7 @@
   <parent>
     <groupId>io.takari</groupId>
     <artifactId>takari</artifactId>
-    <version>53</version>
+    <version>55</version>
   </parent>
 
   <groupId>io.takari.maven.plugins</groupId>
@@ -36,10 +36,10 @@
   </scm>
 
   <properties>
-    <mavenVersion>3.9.6</mavenVersion>
-    <sisuVersion>0.9.0.M2</sisuVersion>
+    <mavenVersion>3.9.8</mavenVersion>
+    <sisuVersion>0.9.0.M3</sisuVersion>
     <sisuGuiceVersion>6.0.0</sisuGuiceVersion>
-    <aetherVersion>1.9.18</aetherVersion>
+    <aetherVersion>1.9.21</aetherVersion>
     <slf4jVersion>1.7.36</slf4jVersion>
   </properties>
 
@@ -53,7 +53,7 @@
       <dependency>
         <groupId>org.junit</groupId>
         <artifactId>junit-bom</artifactId>
-        <version>5.10.2</version>
+        <version>5.10.3</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
@@ -61,6 +61,16 @@
         <groupId>org.codehaus.plexus</groupId>
         <artifactId>plexus-utils</artifactId>
         <version>3.5.1</version>
+      </dependency>
+      <dependency>
+        <groupId>org.slf4j</groupId>
+        <artifactId>slf4j-api</artifactId>
+        <version>1.7.36</version>
+      </dependency>
+      <dependency>
+        <groupId>org.slf4j</groupId>
+        <artifactId>slf4j-simple</artifactId>
+        <version>1.7.36</version>
       </dependency>
 
       <!-- unit testing -->
@@ -138,6 +148,7 @@
       </dependency>
 
       <!-- automatic resolution of maven runtimes during integration tests -->
+      <!-- Note: this compress must work with commons-io in Maven: 1.26.1 requires Maven 3.8! -->
       <dependency>
         <groupId>org.apache.commons</groupId>
         <artifactId>commons-compress</artifactId>

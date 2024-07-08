@@ -28,7 +28,7 @@ public class IntegrationTest {
   @Test
   public void testBasic() throws Exception {
     File basedir = resources.getBasedir("basic");
-    maven.forProject(basedir).execute("validate").assertErrorFreeLog();
+    maven.forProject(basedir).withCliOptions("-e").execute("validate").assertErrorFreeLog();
     TestResources.assertFilesPresent(basedir, "target/output.txt");
   }
 

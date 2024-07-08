@@ -19,7 +19,6 @@ import java.util.List;
 import java.util.Map;
 
 public class MavenRuntime {
-
     private final MavenLauncher launcher;
 
     private final TestProperties properties;
@@ -30,6 +29,8 @@ public class MavenRuntime {
 
         protected final File mavenHome;
 
+        protected final String mavenVersion;
+
         protected final File classworldsConf;
 
         protected final List<String> extensions = new ArrayList<>();
@@ -39,6 +40,7 @@ public class MavenRuntime {
         MavenRuntimeBuilder(File mavenHome, File classworldsConf) {
             this.properties = new TestProperties();
             this.mavenHome = mavenHome;
+            this.mavenVersion = MavenInstallationUtils.getMavenVersion(mavenHome, classworldsConf);
             this.classworldsConf = classworldsConf;
 
             StringBuilder workspaceState = new StringBuilder();
@@ -47,7 +49,7 @@ public class MavenRuntime {
 
             String workspaceResolver = properties.get("workspaceResolver");
             if (workspaceState.length() > 0 && isFile(workspaceResolver)) {
-                if ("3.2.1".equals(MavenInstallationUtils.getMavenVersion(mavenHome, classworldsConf))) {
+                if ("3.2.1".equals(mavenVersion)) {
                     throw new IllegalArgumentException(
                             "Maven 3.2.1 is not supported, see https://jira.codehaus.org/browse/MNG-5591");
                 }
@@ -72,6 +74,7 @@ public class MavenRuntime {
         MavenRuntimeBuilder(File mavenHome, File classworldsConf, List<String> extensions, List<String> args) {
             this.properties = new TestProperties();
             this.mavenHome = mavenHome;
+            this.mavenVersion = MavenInstallationUtils.getMavenVersion(mavenHome, classworldsConf);
             this.classworldsConf = classworldsConf;
             this.extensions.addAll(extensions);
             this.args.addAll(args);

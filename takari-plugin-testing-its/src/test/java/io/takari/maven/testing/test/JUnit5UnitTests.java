@@ -86,7 +86,7 @@ class JUnit5UnitTests {
     static final class MavenVersionsSource implements ArgumentsProvider {
 
         private List<String> getMavenVersions() {
-            return Arrays.asList("3.6.3", "3.8.8", "3.9.6");
+            return Arrays.asList("3.6.3", "3.8.8", "3.9.8");
         }
 
         @Override
@@ -94,7 +94,7 @@ class JUnit5UnitTests {
             List<String> mavenVersions = this.getMavenVersions();
             List<Arguments> arguments = new ArrayList<>(mavenVersions.size());
             for (String version : mavenVersions) {
-                File mavenHome = new File("target/apache-maven-" + version);
+                File mavenHome = new File("target/maven-installation/apache-maven-" + version);
                 MavenRuntime maven =
                         MavenRuntime.builder(mavenHome, null).forkedBuilder().build();
                 arguments.add(Arguments.of(maven, version));
