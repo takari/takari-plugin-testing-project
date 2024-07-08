@@ -7,6 +7,8 @@
  */
 package io.takari.maven.testing.executor.junit;
 
+import static java.util.Objects.requireNonNull;
+
 import io.takari.maven.testing.TestProperties;
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
@@ -50,8 +52,6 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
-
-import static java.util.Objects.requireNonNull;
 
 abstract class MavenVersionResolver {
     private static final XPathFactory xpathFactory = XPathFactory.newInstance();
@@ -321,9 +321,9 @@ abstract class MavenVersionResolver {
     }
 
     private InputStream openStream(URL resource) throws IOException {
-      ArrayDeque<URL> resources = new ArrayDeque<>();
-      resources.push(resource);
-      return openStream(resources);
+        ArrayDeque<URL> resources = new ArrayDeque<>();
+        resources.push(resource);
+        return openStream(resources);
     }
 
     private InputStream openStream(ArrayDeque<URL> resources) throws IOException {
