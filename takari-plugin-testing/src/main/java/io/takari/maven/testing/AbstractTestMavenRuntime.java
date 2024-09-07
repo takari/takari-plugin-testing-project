@@ -39,7 +39,7 @@ public abstract class AbstractTestMavenRuntime {
     static {
         DefaultArtifactVersion version = null;
         String path = "/META-INF/maven/org.apache.maven/maven-core/pom.properties";
-        try (InputStream is = TestMavenRuntime.class.getResourceAsStream(path)) {
+        try (InputStream is = AbstractTestMavenRuntime.class.getResourceAsStream(path)) {
             Properties properties = new Properties();
             if (is != null) {
                 properties.load(is);
