@@ -7,6 +7,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.Assume;
@@ -63,7 +64,7 @@ public class IntegrationTest {
     }
 
     private void write(File file, String string) throws IOException {
-        try (Writer w = new OutputStreamWriter(new FileOutputStream(file), "UTF-8")) {
+        try (Writer w = new OutputStreamWriter(new FileOutputStream(file), StandardCharsets.UTF_8)) {
             w.write(string);
         }
     }

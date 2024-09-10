@@ -44,8 +44,10 @@ final class MavenVersionsTestExtension implements TestTemplateInvocationContextP
     @Override
     public Stream<TestTemplateInvocationContext> provideTestTemplateInvocationContexts(ExtensionContext context) {
         String displayName = context.getDisplayName();
-        String[] versions =
-                context.getTestClass().get().getAnnotation(MavenVersions.class).value();
+        String[] versions = context.getTestClass()
+                .orElseThrow()
+                .getAnnotation(MavenVersions.class)
+                .value();
         List<TestTemplateInvocationContext> contexts = new ArrayList<>();
         List<Throwable> errors = new ArrayList<>();
 

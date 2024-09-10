@@ -42,6 +42,7 @@ import java.io.OutputStreamWriter;
 import java.lang.reflect.Constructor;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Enumeration;
@@ -234,7 +235,8 @@ class Maven30xRuntime implements MavenRuntime {
 
     protected File getPomFile(File pom) throws IOException {
         if (!pom.exists()) {
-            try (BufferedWriter w = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(pom), "UTF-8"))) {
+            try (BufferedWriter w =
+                    new BufferedWriter(new OutputStreamWriter(new FileOutputStream(pom), StandardCharsets.UTF_8))) {
                 w.write("<?xml version='1.0' encoding='UTF-8'?>\n");
                 w.write("<project>\n");
                 w.write("<modelVersion>4.0.0</modelVersion>\n");
