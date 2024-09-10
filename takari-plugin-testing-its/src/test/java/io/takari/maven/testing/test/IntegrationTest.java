@@ -33,7 +33,7 @@ public class IntegrationTest {
         List<Object[]> parameters = new ArrayList<>();
         parameters.add(new Object[] {"3.6.3"});
         parameters.add(new Object[] {"3.8.8"});
-        parameters.add(new Object[] {"3.9.8"});
+        parameters.add(new Object[] {"3.9.9"});
         return parameters;
     }
 

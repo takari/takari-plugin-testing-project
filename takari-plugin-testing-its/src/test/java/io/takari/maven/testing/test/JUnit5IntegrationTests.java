@@ -16,7 +16,7 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 @MavenInstallations({
     "target/maven-installation/apache-maven-3.6.3",
     "target/maven-installation/apache-maven-3.8.8",
-    "target/maven-installation/apache-maven-3.9.8"
+    "target/maven-installation/apache-maven-3.9.9"
 })
 public class JUnit5IntegrationTests {
 
