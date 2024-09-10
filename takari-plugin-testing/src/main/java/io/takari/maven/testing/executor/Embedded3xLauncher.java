@@ -41,6 +41,7 @@ import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -117,7 +118,7 @@ class Embedded3xLauncher implements MavenLauncher {
         }
 
         public void store(OutputStream os) throws IOException {
-            BufferedWriter out = new BufferedWriter(new OutputStreamWriter(os, "UTF-8")); // $NON-NLS-1$
+            BufferedWriter out = new BufferedWriter(new OutputStreamWriter(os, StandardCharsets.UTF_8)); // $NON-NLS-1$
             out.write(String.format("main is %s from %s\n", mainType, mainRealm));
             for (Map.Entry<String, List<String>> realm : realms.entrySet()) {
                 out.write(String.format("[%s]\n", realm.getKey()));
