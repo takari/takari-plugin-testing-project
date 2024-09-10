@@ -2,7 +2,7 @@
 
 [![Maven Central](https://img.shields.io/maven-central/v/io.takari.maven.plugins/takari-plugin-testing-project.svg?label=Maven%20Central)](https://search.maven.org/artifact/io.takari.maven.plugins/takari-plugin-testing-project)
 [![Verify](https://github.com/takari/takari-plugin-testing-project/actions/workflows/ci.yml/badge.svg)](https://github.com/takari/takari-plugin-testing-project/actions/workflows/ci.yml)
-[![Reproducible Builds](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/jvm-repo-rebuild/reproducible-central/master/content/io/takari/maven/plugins/takari-plugin-testing-project/badge.json)](https://github.com/jvm-repo-rebuild/reproducible-central/blob/master/content/io/takari/maven/plugins/takari-plugin-testing-project/README.md)
+[![Reproducible Builds](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/jvm-repo-rebuild/reproducible-central/master/content/io/takari/maven/plugins/takari-plugin-testing/badge.json)](https://github.com/jvm-repo-rebuild/reproducible-central/blob/master/content/io/takari/maven/plugins/takari-plugin-testing/README.md)
 
 Small, cohesive, one-stop library for developing unit and integration tests for 
 Maven plugins. Provides alternative to, and arguably supersedes, 
