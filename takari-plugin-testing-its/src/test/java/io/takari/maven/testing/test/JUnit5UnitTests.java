@@ -86,7 +86,7 @@ class JUnit5UnitTests {
     static final class MavenVersionsSource implements ArgumentsProvider {
 
         private List<String> getMavenVersions() {
-            return Arrays.asList("3.6.3", "3.8.8", "3.9.8");
+            return Arrays.asList("3.6.3", "3.8.8", "3.9.9");
         }
 
         @Override
