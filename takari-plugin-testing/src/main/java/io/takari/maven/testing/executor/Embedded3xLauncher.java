@@ -23,6 +23,7 @@ package io.takari.maven.testing.executor;
  */
 
 import static io.takari.maven.testing.executor.MavenInstallationUtils.SYSPROP_MAVEN_HOME;
+import static io.takari.maven.testing.executor.MavenInstallationUtils.SYSPROP_MAVEN_MAIN_CLASS;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedWriter;
@@ -273,7 +274,9 @@ class Embedded3xLauncher implements MavenLauncher {
         Thread.currentThread().setContextClassLoader(bootLoader);
         try {
             ClassworldsConfiguration config = new ClassworldsConfiguration();
-            ConfigurationParser configParser = new ConfigurationParser(config, System.getProperties());
+            Properties properties = new Properties(System.getProperties());
+            properties.put(SYSPROP_MAVEN_MAIN_CLASS, "org.apache.maven.cli.MavenCli");
+            ConfigurationParser configParser = new ConfigurationParser(config, properties);
             try (InputStream is = new BufferedInputStream(new FileInputStream(configFile))) {
                 configParser.parse(is);
             }

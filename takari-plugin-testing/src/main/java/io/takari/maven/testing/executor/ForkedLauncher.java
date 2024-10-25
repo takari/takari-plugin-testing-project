@@ -22,6 +22,8 @@ package io.takari.maven.testing.executor;
  * the License.
  */
 
+import static io.takari.maven.testing.executor.MavenInstallationUtils.SYSPROP_MAVEN_MAIN_CLASS;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -118,6 +120,7 @@ class ForkedLauncher implements MavenLauncher {
         cli.addArgument("-Dclassworlds.conf=" + new File(mavenHome, "bin/m2.conf").getAbsolutePath());
         cli.addArgument("-Dmaven.home=" + mavenHome.getAbsolutePath());
         cli.addArgument("-Dmaven.multiModuleProjectDirectory=" + multiModuleProjectDirectory.getAbsolutePath());
+        cli.addArgument("-D" + SYSPROP_MAVEN_MAIN_CLASS + "=org.apache.maven.cling.MavenCling");
 
         cli.addArguments(jvmArgs.toArray(new String[jvmArgs.size()]));
 

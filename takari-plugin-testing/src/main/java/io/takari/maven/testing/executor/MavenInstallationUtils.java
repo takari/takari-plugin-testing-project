@@ -29,6 +29,8 @@ public class MavenInstallationUtils {
 
     public static final String SYSPROP_MAVEN_HOME = "maven.home";
 
+    public static final String SYSPROP_MAVEN_MAIN_CLASS = "maven.mainClass";
+
     public static final String SYSPROP_CLASSWORLDSCONF = "classworlds.conf";
 
     public static String getMavenVersion(Class<?> clazz) throws IOException {
@@ -104,6 +106,7 @@ public class MavenInstallationUtils {
             VersionConfigHandler configHandler = new VersionConfigHandler();
             Properties properties = new Properties(System.getProperties());
             properties.setProperty(SYSPROP_MAVEN_HOME, mavenHome.getCanonicalPath());
+            properties.setProperty(SYSPROP_MAVEN_MAIN_CLASS, SYSPROP_MAVEN_MAIN_CLASS);
             ConfigurationParser configParser = new ConfigurationParser(configHandler, properties);
             try (InputStream is = new BufferedInputStream(new FileInputStream(classworldsConf))) {
                 configParser.parse(is);
