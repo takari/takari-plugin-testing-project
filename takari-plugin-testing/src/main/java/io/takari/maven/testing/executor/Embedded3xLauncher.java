@@ -22,7 +22,9 @@ package io.takari.maven.testing.executor;
  * the License.
  */
 
+import static io.takari.maven.testing.executor.MavenInstallationUtils.MAVEN4_MAIN_CLASS;
 import static io.takari.maven.testing.executor.MavenInstallationUtils.SYSPROP_MAVEN_HOME;
+import static io.takari.maven.testing.executor.MavenInstallationUtils.SYSPROP_MAVEN_MAIN_CLASS;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedWriter;
@@ -191,6 +193,8 @@ class Embedded3xLauncher implements MavenLauncher {
 
     private final File mavenHome;
 
+    private final String mavenVersion;
+
     private final Object classWorld;
 
     private final Object mavenCli;
@@ -199,8 +203,10 @@ class Embedded3xLauncher implements MavenLauncher {
 
     private final List<String> args;
 
-    private Embedded3xLauncher(File mavenHome, Object classWorld, Object mavenCli, Method doMain, List<String> args) {
+    private Embedded3xLauncher(
+            File mavenHome, String mavenVersion, Object classWorld, Object mavenCli, Method doMain, List<String> args) {
         this.mavenHome = mavenHome;
+        this.mavenVersion = mavenVersion;
         this.classWorld = classWorld;
         this.mavenCli = mavenCli;
         this.doMain = doMain;
@@ -266,6 +272,10 @@ class Embedded3xLauncher implements MavenLauncher {
             File mavenHome, File classworldConf, List<URL> bootclasspath, List<String> extensions, List<String> args)
             throws LauncherException {
         File configFile = MavenInstallationUtils.getClassworldsConf(mavenHome, classworldConf);
+        String subjectVersion = MavenInstallationUtils.getMavenVersion(mavenHome, configFile);
+        if (subjectVersion == null) {
+            throw new LauncherException("Cannot determine Maven version");
+        }
 
         ClassLoader bootLoader = getBootLoader(mavenHome, bootclasspath);
 
@@ -273,7 +283,9 @@ class Embedded3xLauncher implements MavenLauncher {
         Thread.currentThread().setContextClassLoader(bootLoader);
         try {
             ClassworldsConfiguration config = new ClassworldsConfiguration();
-            ConfigurationParser configParser = new ConfigurationParser(config, System.getProperties());
+            Properties systemProperties = new Properties(System.getProperties());
+            systemProperties.setProperty(SYSPROP_MAVEN_MAIN_CLASS, MAVEN4_MAIN_CLASS);
+            ConfigurationParser configParser = new ConfigurationParser(config, systemProperties);
             try (InputStream is = new BufferedInputStream(new FileInputStream(configFile))) {
                 configParser.parse(is);
             }
@@ -299,14 +311,27 @@ class Embedded3xLauncher implements MavenLauncher {
                     (Class<?>) launcherClass.getMethod("getMainClass").invoke(launcher);
             Object mavenCli = cliClass.getConstructor(classWorld.getClass()).newInstance(classWorld);
 
-            Method doMain = cliClass.getMethod(
-                    "doMain", //
-                    String[].class,
-                    String.class,
-                    PrintStream.class,
-                    PrintStream.class);
+            Method main;
+            if (subjectVersion.startsWith("3.")) {
+                main = cliClass.getMethod(
+                        "doMain", //
+                        String[].class,
+                        String.class,
+                        PrintStream.class,
+                        PrintStream.class);
+            } else if (subjectVersion.startsWith("4.")) {
+                main = cliClass.getMethod(
+                        "main",
+                        String[].class,
+                        classWorld.getClass(),
+                        InputStream.class,
+                        OutputStream.class,
+                        OutputStream.class);
+            } else {
+                throw new LauncherException("Unknown Maven version " + subjectVersion);
+            }
 
-            return new Embedded3xLauncher(mavenHome, classWorld, mavenCli, doMain, args);
+            return new Embedded3xLauncher(mavenHome, subjectVersion, classWorld, mavenCli, main, args);
         } catch (ReflectiveOperationException | IOException | ClassWorldException | ConfigurationException e) {
             throw new LauncherException("Invalid Maven home directory " + mavenHome, e);
         } finally {
@@ -318,7 +343,7 @@ class Embedded3xLauncher implements MavenLauncher {
         List<URL> urls = classpath;
 
         if (urls == null) {
-            urls = new ArrayList<URL>();
+            urls = new ArrayList<>();
 
             File bootDir = new File(mavenHome, "boot");
             addUrls(urls, bootDir);
@@ -328,7 +353,7 @@ class Embedded3xLauncher implements MavenLauncher {
             throw new IllegalArgumentException("Invalid Maven home directory " + mavenHome);
         }
 
-        URL[] ucp = urls.toArray(new URL[urls.size()]);
+        URL[] ucp = urls.toArray(new URL[0]);
 
         return new URLClassLoader(ucp, ClassLoader.getSystemClassLoader().getParent());
     }
@@ -375,12 +400,21 @@ class Embedded3xLauncher implements MavenLauncher {
                 out.format("Build work directory: %s\n", workingDirectory);
                 out.format("Execution parameters: %s\n\n", args);
 
-                Object result = doMain.invoke(
-                        mavenCli, //
-                        args.toArray(new String[args.size()]),
-                        workingDirectory.getAbsolutePath(),
-                        out,
-                        out);
+                Object result;
+                if (mavenVersion.startsWith("3.")) {
+                    result = doMain.invoke(
+                            mavenCli, //
+                            args.toArray(new String[0]),
+                            workingDirectory.getAbsolutePath(),
+                            out,
+                            out);
+                } else if (mavenVersion.startsWith("4.")) {
+                    System.setProperty(SYSPROP_MAVEN_MAIN_CLASS, MAVEN4_MAIN_CLASS);
+                    result = doMain.invoke(null, args.toArray(new String[0]), classWorld, null, out, out);
+                    System.clearProperty(SYSPROP_MAVEN_MAIN_CLASS);
+                } else {
+                    throw new LauncherException("Invalid Maven version " + mavenVersion);
+                }
 
                 Set<String> realms = getRealmIds();
                 realms.removeAll(origRealms);
@@ -394,9 +428,7 @@ class Embedded3xLauncher implements MavenLauncher {
 
                 System.setProperties(originalProperties);
             }
-        } catch (IllegalAccessException e) {
-            throw new LauncherException("Failed to run Maven: " + e.getMessage(), e);
-        } catch (InvocationTargetException e) {
+        } catch (IllegalAccessException | InvocationTargetException e) {
             throw new LauncherException("Failed to run Maven: " + e.getMessage(), e);
         } finally {
             if (logFile != null) {
@@ -414,17 +446,8 @@ class Embedded3xLauncher implements MavenLauncher {
     }
 
     @Override
-    public String getMavenVersion() throws LauncherException {
-        try {
-            String version = MavenInstallationUtils.getMavenVersion(mavenCli.getClass());
-            if (version != null) {
-                return version;
-            }
-        } catch (IOException e) {
-            throw new LauncherException("Failed to read Maven version", e);
-        }
-
-        throw new LauncherException("Could not determine embedded Maven version");
+    public String getMavenVersion() {
+        return mavenVersion;
     }
 
     private Set<String> getRealmIds() {

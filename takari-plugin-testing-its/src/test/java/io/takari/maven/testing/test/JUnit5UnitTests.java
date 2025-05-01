@@ -27,6 +27,8 @@ import org.junit.jupiter.params.provider.ArgumentsSource;
  * <li>The test project is not able to resolve test harness from the reactor, hence the outer build
  * must run at least install phase.</li>
  * </ul>
+ *
+ * TODO: DOES NOT WORK WITH MAVEN 4!
  */
 class JUnit5UnitTests {
 
