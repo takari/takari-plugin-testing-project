@@ -41,7 +41,7 @@ final class MavenInstallationsTestExtension implements TestTemplateInvocationCon
     public Stream<TestTemplateInvocationContext> provideTestTemplateInvocationContexts(ExtensionContext context) {
         String displayName = context.getDisplayName();
         String[] installations = context.getTestClass()
-                .orElseThrow()
+                .orElseThrow(IllegalStateException::new)
                 .getAnnotation(MavenInstallations.class)
                 .value();
         return Arrays.stream(installations)
