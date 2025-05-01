@@ -22,6 +22,9 @@ package io.takari.maven.testing.executor;
  * the License.
  */
 
+import static io.takari.maven.testing.executor.MavenInstallationUtils.MAVEN4_MAIN_CLASS;
+import static io.takari.maven.testing.executor.MavenInstallationUtils.SYSPROP_MAVEN_MAIN_CLASS;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -118,12 +121,13 @@ class ForkedLauncher implements MavenLauncher {
         cli.addArgument("-Dclassworlds.conf=" + new File(mavenHome, "bin/m2.conf").getAbsolutePath());
         cli.addArgument("-Dmaven.home=" + mavenHome.getAbsolutePath());
         cli.addArgument("-Dmaven.multiModuleProjectDirectory=" + multiModuleProjectDirectory.getAbsolutePath());
+        cli.addArgument("-D" + SYSPROP_MAVEN_MAIN_CLASS + "=" + MAVEN4_MAIN_CLASS);
 
-        cli.addArguments(jvmArgs.toArray(new String[jvmArgs.size()]));
+        cli.addArguments(jvmArgs.toArray(new String[0]));
 
         cli.addArgument("org.codehaus.plexus.classworlds.launcher.Launcher");
 
-        cli.addArguments(args.toArray(new String[args.size()]));
+        cli.addArguments(args.toArray(new String[0]));
         if (extensions != null && !extensions.isEmpty()) {
             cli.addArgument("-Dmaven.ext.class.path=" + toPath(extensions));
         }
@@ -131,9 +135,7 @@ class ForkedLauncher implements MavenLauncher {
         cli.addArguments(cliArgs);
 
         Map<String, String> env = new HashMap<>();
-        if (mavenHome != null) {
-            env.put("M2_HOME", mavenHome.getAbsolutePath());
-        }
+        env.put("M2_HOME", mavenHome.getAbsolutePath());
         if (envVars != null) {
             env.putAll(envVars);
         }
@@ -141,9 +143,10 @@ class ForkedLauncher implements MavenLauncher {
             env.put("JAVA_HOME", System.getProperty("java.home"));
         }
 
-        DefaultExecutor executor = new DefaultExecutor();
+        DefaultExecutor executor = DefaultExecutor.builder()
+                .setWorkingDirectory(workingDirectory.getAbsoluteFile())
+                .get();
         executor.setProcessDestroyer(new ShutdownHookProcessDestroyer());
-        executor.setWorkingDirectory(workingDirectory.getAbsoluteFile());
 
         try (OutputStream log = new FileOutputStream(logFile)) {
             PrintStream out = new PrintStream(log);

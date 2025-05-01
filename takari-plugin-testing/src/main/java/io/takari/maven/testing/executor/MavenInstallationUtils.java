@@ -31,6 +31,12 @@ public class MavenInstallationUtils {
 
     public static final String SYSPROP_CLASSWORLDSCONF = "classworlds.conf";
 
+    public static final String SYSPROP_MAVEN_MAIN_CLASS = "maven.mainClass";
+
+    public static final String MAVEN3_MAIN_CLASS = "org.apache.maven.cli.MavenCli";
+
+    public static final String MAVEN4_MAIN_CLASS = "org.apache.maven.cling.MavenCling";
+
     public static String getMavenVersion(Class<?> clazz) throws IOException {
         try (InputStream is = clazz.getResourceAsStream("/" + MAVEN_CORE_POMPROPERTIES)) {
             return getMavenVersion(is);
@@ -103,6 +109,7 @@ public class MavenInstallationUtils {
         try {
             VersionConfigHandler configHandler = new VersionConfigHandler();
             Properties properties = new Properties(System.getProperties());
+            properties.setProperty(SYSPROP_MAVEN_MAIN_CLASS, MAVEN4_MAIN_CLASS); // must for maven4, ignored by maven3
             properties.setProperty(SYSPROP_MAVEN_HOME, mavenHome.getCanonicalPath());
             ConfigurationParser configParser = new ConfigurationParser(configHandler, properties);
             try (InputStream is = new BufferedInputStream(new FileInputStream(classworldsConf))) {
