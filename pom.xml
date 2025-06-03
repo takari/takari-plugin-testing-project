@@ -19,7 +19,7 @@
 
   <groupId>io.takari.maven.plugins</groupId>
   <artifactId>takari-plugin-testing-project</artifactId>
-  <version>3.1.1-SNAPSHOT</version>
+  <version>3.1.1</version>
   <packaging>pom</packaging>
 
   <name>${project.groupId}:${project.artifactId}</name>
@@ -33,7 +33,7 @@
   <scm>
     <connection>scm:git:git@github.com:takari/takari-plugin-testing-project.git</connection>
     <developerConnection>scm:git:git@github.com:takari/takari-plugin-testing-project.git</developerConnection>
-    <tag>HEAD</tag>
+    <tag>takari-plugin-testing-3.1.1</tag>
     <url>https://github.com/takari/takari-plugin-testing-project</url>
   </scm>
 
