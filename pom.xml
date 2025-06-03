@@ -31,7 +31,7 @@
   <scm>
     <connection>scm:git:git@github.com:takari/takari-plugin-testing-project.git</connection>
     <developerConnection>scm:git:git@github.com:takari/takari-plugin-testing-project.git</developerConnection>
-    <tag>takari-plugin-testing-3.0.3</tag>
+    <tag>HEAD</tag>
     <url>https://github.com/takari/takari-plugin-testing-project</url>
   </scm>
 
