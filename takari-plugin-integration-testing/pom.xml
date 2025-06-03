@@ -20,6 +20,8 @@
   <artifactId>takari-plugin-integration-testing</artifactId>
   <packaging>pom</packaging>
 
+  <name>${project.groupId}:${project.artifactId}</name>
+
   <dependencies>
     <dependency>
       <groupId>io.takari.maven.plugins</groupId>

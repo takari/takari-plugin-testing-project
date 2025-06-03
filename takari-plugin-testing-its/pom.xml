@@ -20,6 +20,8 @@
   <artifactId>takari-plugin-testing-its</artifactId>
   <packaging>takari-jar</packaging>
 
+  <name>${project.groupId}:${project.artifactId}</name>
+
   <dependencies>
     <dependency>
       <groupId>junit</groupId>
