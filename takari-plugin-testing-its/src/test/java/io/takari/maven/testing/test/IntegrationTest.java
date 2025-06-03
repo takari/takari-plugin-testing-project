@@ -25,8 +25,6 @@ import org.junit.runners.Parameterized.Parameters;
  * <li>The test project is not able to resolve test harness from the reactor, hence the outer build
  * must run at least install phase.</li>
  * </ul>
- *
- * TODO: DOES NOT WORK WITH MAVEN 4!
  */
 @RunWith(Parameterized.class)
 public class IntegrationTest {
@@ -37,6 +35,7 @@ public class IntegrationTest {
         parameters.add(new Object[] {"3.6.3"});
         parameters.add(new Object[] {"3.8.8"});
         parameters.add(new Object[] {"3.9.9"});
+        parameters.add(new Object[] {"4.0.0-rc-4-SNAPSHOT"});
         return parameters;
     }
 

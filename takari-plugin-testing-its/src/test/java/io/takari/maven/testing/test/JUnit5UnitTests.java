@@ -27,8 +27,6 @@ import org.junit.jupiter.params.provider.ArgumentsSource;
  * <li>The test project is not able to resolve test harness from the reactor, hence the outer build
  * must run at least install phase.</li>
  * </ul>
- *
- * TODO: DOES NOT WORK WITH MAVEN 4!
  */
 class JUnit5UnitTests {
 
@@ -88,7 +86,7 @@ class JUnit5UnitTests {
     static final class MavenVersionsSource implements ArgumentsProvider {
 
         private List<String> getMavenVersions() {
-            return Arrays.asList("3.6.3", "3.8.8", "3.9.9");
+            return Arrays.asList("3.6.3", "3.8.8", "3.9.9", "4.0.0-rc-4-SNAPSHOT");
         }
 
         @Override

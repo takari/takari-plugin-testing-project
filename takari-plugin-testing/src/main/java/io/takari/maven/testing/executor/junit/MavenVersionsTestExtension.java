@@ -45,7 +45,7 @@ final class MavenVersionsTestExtension implements TestTemplateInvocationContextP
     public Stream<TestTemplateInvocationContext> provideTestTemplateInvocationContexts(ExtensionContext context) {
         String displayName = context.getDisplayName();
         String[] versions = context.getTestClass()
-                .orElseThrow()
+                .orElseThrow(IllegalStateException::new)
                 .getAnnotation(MavenVersions.class)
                 .value();
         List<TestTemplateInvocationContext> contexts = new ArrayList<>();

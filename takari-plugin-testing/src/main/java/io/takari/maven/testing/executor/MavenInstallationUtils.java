@@ -9,10 +9,10 @@ package io.takari.maven.testing.executor;
 
 import java.io.BufferedInputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.nio.file.Files;
 import java.util.Properties;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
@@ -89,7 +89,7 @@ public class MavenInstallationUtils {
                         }
                     } else {
                         try (InputStream is = new BufferedInputStream(
-                                new FileInputStream(new File(file, MAVEN_CORE_POMPROPERTIES)))) {
+                                Files.newInputStream(new File(file, MAVEN_CORE_POMPROPERTIES).toPath()))) {
                             version = getMavenVersion(is);
                         }
                     }
@@ -112,7 +112,7 @@ public class MavenInstallationUtils {
             properties.setProperty(SYSPROP_MAVEN_MAIN_CLASS, MAVEN4_MAIN_CLASS); // must for maven4, ignored by maven3
             properties.setProperty(SYSPROP_MAVEN_HOME, mavenHome.getCanonicalPath());
             ConfigurationParser configParser = new ConfigurationParser(configHandler, properties);
-            try (InputStream is = new BufferedInputStream(new FileInputStream(classworldsConf))) {
+            try (InputStream is = new BufferedInputStream(Files.newInputStream(classworldsConf.toPath()))) {
                 configParser.parse(is);
             }
         } catch (IOException | ClassWorldException | ConfigurationException e) {
