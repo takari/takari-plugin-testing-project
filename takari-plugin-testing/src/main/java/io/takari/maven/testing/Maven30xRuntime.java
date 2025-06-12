@@ -334,6 +334,7 @@ class Maven30xRuntime implements MavenRuntime {
         systemProperties.putAll(System.getProperties()); // TODO not thread safe
         systemProperties.setProperty("maven.version", mavenVersion);
         systemProperties.setProperty("maven.build.version", mavenVersion);
+        System.getenv().forEach((k, v) -> systemProperties.setProperty("env." + k, v));
 
         // request with initial configuration
         MavenExecutionRequest request = new DefaultMavenExecutionRequest();

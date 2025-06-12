@@ -124,7 +124,7 @@ public class MavenRuntime {
 
     public static class ForkedMavenRuntimeBuilder extends MavenRuntimeBuilder {
 
-        private Map<String, String> environment;
+        private Map<String, String> environment = new HashMap<>(System.getenv());
         private final List<String> jvmArgs = new ArrayList<>();
 
         ForkedMavenRuntimeBuilder(File mavenHome, File classworldsConf) {
